@@ -2,24 +2,24 @@
 
 ## 1. Containerize the backend
 
-- [ ] 1.1 Write `backend/Dockerfile` (multi-stage: `build` stage runs `npm ci && npm run build`; `runtime` stage copies `dist/` and `node_modules` (production-only) and runs `node dist/main.js`) and verify `docker build -f backend/Dockerfile backend` succeeds
-- [ ] 1.2 Add `backend/.dockerignore` (excluding `node_modules`, `dist`, `.env`, test files) and verify the built image doesn't contain the real `.env`
-- [ ] 1.3 Verify the built backend image runs standalone (`docker run` with the documented env vars pointing at the host MySQL via `host.docker.internal`) and responds on its internal port, per `specs/deployment/spec.md`'s "Backend container connects to the existing host database" scenario
+- [x] 1.1 Write `backend/Dockerfile` (multi-stage: `build` stage runs `npm ci && npm run build`; `runtime` stage copies `dist/` and `node_modules` (production-only) and runs `node dist/main.js`) and verify `docker build -f backend/Dockerfile backend` succeeds
+- [x] 1.2 Add `backend/.dockerignore` (excluding `node_modules`, `dist`, `.env`, test files) and verify the built image doesn't contain the real `.env`
+- [x] 1.3 Verify the built backend image runs standalone (`docker run` with the documented env vars pointing at the host MySQL via `host.docker.internal`) and responds on its internal port, per `specs/deployment/spec.md`'s "Backend container connects to the existing host database" scenario
 
 ## 2. Containerize the frontend
 
-- [ ] 2.1 Write `frontend/Dockerfile` (multi-stage: `build` stage runs `npm ci && ng build --configuration production --base-href /tickets-app/`; `runtime` stage copies the static output into a minimal static file server image) and verify `docker build -f frontend/Dockerfile frontend` succeeds
-- [ ] 2.2 Configure the runtime stage's web server for SPA fallback (unknown paths serve `index.html`) and verify a request to a non-root route (e.g. `/tickets` under the container's own root, before Caddy prefixing) returns the app shell, per the "Deep-linked route loads correctly" scenario
-- [ ] 2.3 Add `frontend/Dockerfile`'s companion `.dockerignore` and verify the built image doesn't contain `node_modules` from the host or any `.env`
+- [x] 2.1 Write `frontend/Dockerfile` (multi-stage: `build` stage runs `npm ci && ng build --configuration production --base-href /tickets-app/`; `runtime` stage copies the static output into a minimal static file server image) and verify `docker build -f frontend/Dockerfile frontend` succeeds
+- [x] 2.2 Configure the runtime stage's web server for SPA fallback (unknown paths serve `index.html`) and verify a request to a non-root route (e.g. `/tickets` under the container's own root, before Caddy prefixing) returns the app shell, per the "Deep-linked route loads correctly" scenario
+- [x] 2.3 Add `frontend/Dockerfile`'s companion `.dockerignore` and verify the built image doesn't contain `node_modules` from the host or any `.env`
 
 ## 3. Compose the stack
 
-- [ ] 3.1 Write `docker-compose.yml` at the repo root defining `backend` (build from `backend/Dockerfile`, port mapping `3010:3000`, `extra_hosts: ["host.docker.internal:host-gateway"]`, env vars from `.env`) and `frontend` (build from `frontend/Dockerfile`, port mapping `4310:80`) services
-- [ ] 3.2 Write a root-level `.env.example` documenting `DB_HOST` (defaulting to `host.docker.internal`), `DB_PORT=3306`, `DB_USERNAME`, `DB_PASSWORD`, `DB_DATABASE=dev_tickets`, `JWT_SECRET`, with placeholder values only, and verify no real secret value appears in it or in `docker-compose.yml`
-- [ ] 3.3 Create a real, git-ignored root `.env` with the actual `dev_tickets_app` credentials and a real JWT secret, and verify it's excluded by `.gitignore`
-- [ ] 3.4 Run `docker compose up -d --build` and verify both containers reach a running state, per the "Fresh start on a host with the prerequisite database" scenario
-- [ ] 3.5 Run `docker compose exec backend npm run migration:run` and verify it reports no pending migrations (schema already applied directly on the host in earlier phases)
-- [ ] 3.6 Hit the backend container directly at `http://127.0.0.1:3010/api/auth/login` and the frontend container at `http://127.0.0.1:4310/` and confirm both respond correctly before involving Caddy at all
+- [x] 3.1 Write `docker-compose.yml` at the repo root defining `backend` (build from `backend/Dockerfile`, port mapping `3010:3000`, `extra_hosts: ["host.docker.internal:host-gateway"]`, env vars from `.env`) and `frontend` (build from `frontend/Dockerfile`, port mapping `4310:80`) services
+- [x] 3.2 Write a root-level `.env.example` documenting `DB_HOST` (defaulting to `host.docker.internal`), `DB_PORT=3306`, `DB_USERNAME`, `DB_PASSWORD`, `DB_DATABASE=dev_tickets`, `JWT_SECRET`, with placeholder values only, and verify no real secret value appears in it or in `docker-compose.yml`
+- [x] 3.3 Create a real, git-ignored root `.env` with the actual `dev_tickets_app` credentials and a real JWT secret, and verify it's excluded by `.gitignore`
+- [x] 3.4 Run `docker compose up -d --build` and verify both containers reach a running state, per the "Fresh start on a host with the prerequisite database" scenario. Required a MySQL grant for `dev_tickets_app` from the Docker bridge subnet (`172.19.0.0/16`) in addition to `localhost` — the local-dev-only grant from `add-ticket-support-system` didn't cover container traffic.
+- [x] 3.5 Run `docker compose exec backend npm run migration:run` and verify it reports no pending migrations (schema already applied directly on the host in earlier phases). Note: the documented `migration:run` script depends on `ts-node`/`typeorm-ts-node-commonjs`, which aren't in the production image's dependencies; added a `migration:run:prod` script (plain `typeorm` CLI against the compiled `dist/database/data-source.js`) for use inside the container instead.
+- [x] 3.6 Hit the backend container directly at `http://127.0.0.1:3010/api/auth/login` and the frontend container at `http://127.0.0.1:4310/` and confirm both respond correctly before involving Caddy at all
 
 ## 4. Publish through the host's shared Caddy site
 
