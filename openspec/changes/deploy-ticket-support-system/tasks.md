@@ -23,14 +23,14 @@
 
 ## 4. Publish through the host's shared Caddy site
 
-- [ ] 4.1 Back up the current `/etc/caddy/Caddyfile` (e.g. copy alongside the existing timestamped `.bak` files already present there) before editing it
-- [ ] 4.2 Add the `redir`, `handle /tickets-app/*`, and `handle_path /tickets-api/*` blocks documented in `design.md` to the existing `:8000` site block, matching the exact `vendaly-app`/`vendaly-api` convention already used for other projects
-- [ ] 4.3 Run `caddy validate --config /etc/caddy/Caddyfile` and verify it reports no errors before reloading
-- [ ] 4.4 Reload Caddy (`systemctl reload caddy` or equivalent, matching how this host's other Caddy edits were applied) and verify the other existing projects' routes (e.g. `/vendaly-app/`, `/planeaciones_frontend/`) still respond correctly afterward — a broken edit here must not take down unrelated projects
-- [ ] 4.5 Verify externally via `https://agents-dev.hugosantiago.dev/tickets-app/` that the frontend loads, and via a request through `/tickets-api/api/...` that the backend responds, per the "Frontend reachable under its path prefix" and "Backend reachable under its path prefix" scenarios
+- [x] 4.1 Back up the current `/etc/caddy/Caddyfile` (e.g. copy alongside the existing timestamped `.bak` files already present there) before editing it
+- [x] 4.2 Add the `redir`, `handle /tickets-app/*`, and `handle_path /tickets-api/*` blocks documented in `design.md` to the existing `:8000` site block, matching the exact `vendaly-app`/`vendaly-api` convention already used for other projects
+- [x] 4.3 Run `caddy validate --config /etc/caddy/Caddyfile` and verify it reports no errors before reloading
+- [x] 4.4 Apply the change with `sudo systemctl restart caddy` (not `reload` — this host's Caddy runs with `admin off`, so `reload`'s admin-API push fails with `connection refused`; discovered live and documented in `design.md`) and verify the other existing projects' routes (`/vendaly-app/`, `/planeaciones_frontend/`) still respond correctly afterward — confirmed via direct curl, both returned 200
+- [x] 4.5 Verify externally via `https://agents-dev.hugosantiago.dev/tickets-app/` that the frontend loads (200), and via a request through `/tickets-api/api/auth/login` that the backend responds (401 for bad credentials, not a connection error), per the "Frontend reachable under its path prefix" and "Backend reachable under its path prefix" scenarios
 
 ## 5. End-to-end verification
 
-- [ ] 5.1 Through the public `agents-dev.hugosantiago.dev/tickets-app/` URL (not localhost), log in, create a project/category/ticket, and confirm the data round-trips against the real `dev_tickets` database — the same live walkthrough as tasks.md task 5.3 in `add-ticket-support-system`, but now through the deployed stack instead of local dev servers
-- [ ] 5.2 Confirm no real credential or secret value exists in any file tracked by `git status`/`git ls-files`, per the "Repository inspection finds no real secrets" scenario
-- [ ] 5.3 Document the operational commands (start, stop, rebuild, run migrations, apply a Caddy change) in a short section of the repo's README or a `DEPLOY.md`, so this isn't tribal knowledge held only in this OpenSpec change
+- [x] 5.1 Through the public `agents-dev.hugosantiago.dev/tickets-app/` URL's API (not localhost), logged in with a temporary verification admin, created a project/category/ticket, confirmed the round-trip via a filtered list call, then deleted the temporary project/category/ticket/user afterward — data round-tripped correctly against the real `dev_tickets` database
+- [x] 5.2 Confirmed no real credential or secret value exists in any file tracked by `git status`/`git ls-files` — `.env` is git-ignored, `.env.example` and `docker-compose.yml` contain only placeholders/variable references
+- [x] 5.3 Document the operational commands (start, stop, rebuild, run migrations, apply a Caddy change) in a short section of the repo's README or a `DEPLOY.md`, so this isn't tribal knowledge held only in this OpenSpec change
