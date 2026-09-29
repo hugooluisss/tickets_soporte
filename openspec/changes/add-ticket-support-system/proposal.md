@@ -38,6 +38,6 @@ None — this is a greenfield system with no pre-existing specs.
 ## Impact
 
 - **New code**: a NestJS backend project and an Angular frontend project, added to this repository (structure defined in design.md).
-- **New database schema**: relational tables for users, projects, categories, and tickets, plus lookup tables for kind/priority/status (owned by the backend via TypeORM entities/migrations).
-- **New dependencies**: NestJS, TypeORM (or Prisma — decided in design.md), class-validator/class-transformer, JWT library, Angular, Angular CLI/build tooling.
+- **New database schema**: relational tables for users, projects, categories, and tickets (kind/priority/status modeled as enum columns on `tickets`, not separate lookup tables — see design.md), owned by the backend via TypeORM entities/migrations, in a PostgreSQL database.
+- **New dependencies**: NestJS, TypeORM with the PostgreSQL driver (`pg`), class-validator/class-transformer, JWT library, Angular, Angular CLI/build tooling.
 - **No existing systems affected** — nothing else lives in this repository today.
