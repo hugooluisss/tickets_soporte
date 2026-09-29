@@ -24,10 +24,10 @@
 ## 4. Publish through the host's shared Caddy site
 
 - [x] 4.1 Back up the current `/etc/caddy/Caddyfile` (e.g. copy alongside the existing timestamped `.bak` files already present there) before editing it
-- [x] 4.2 Add the `redir`, `handle /tickets-app/*`, and `handle_path /tickets-api/*` blocks documented in `design.md` to the existing `:8000` site block, matching the exact `vendaly-app`/`vendaly-api` convention already used for other projects
+- [x] 4.2 Add the `redir`, `handle_path /tickets-app/*`, and `handle_path /tickets-api/*` blocks documented in `design.md` to the existing `:8000` site block. Correction after initial deploy: the frontend block was first written as plain `handle` (matching `vendaly-app`/`planeaciones_frontend`), which produced a blank page in the browser — the static nginx-served build has no `--serve-path` awareness of the prefix the way those Angular dev servers do, so asset requests 404'd into the SPA fallback with the wrong MIME type. Fixed to `handle_path`, verified assets serve with correct content-types afterward.
 - [x] 4.3 Run `caddy validate --config /etc/caddy/Caddyfile` and verify it reports no errors before reloading
 - [x] 4.4 Apply the change with `sudo systemctl restart caddy` (not `reload` — this host's Caddy runs with `admin off`, so `reload`'s admin-API push fails with `connection refused`; discovered live and documented in `design.md`) and verify the other existing projects' routes (`/vendaly-app/`, `/planeaciones_frontend/`) still respond correctly afterward — confirmed via direct curl, both returned 200
-- [x] 4.5 Verify externally via `https://agents-dev.hugosantiago.dev/tickets-app/` that the frontend loads (200), and via a request through `/tickets-api/api/auth/login` that the backend responds (401 for bad credentials, not a connection error), per the "Frontend reachable under its path prefix" and "Backend reachable under its path prefix" scenarios
+- [x] 4.5 Verify externally via `https://agents-dev.hugosantiago.dev/tickets-app/` that the frontend loads (200), that its referenced JS/CSS assets serve with correct content types (not the SPA fallback's `text/html`, per "A referenced script asset loads as a script through the proxy"), and via a request through `/tickets-api/api/auth/login` that the backend responds (400/401 for a bad login attempt, not a connection error), per the "Frontend reachable under its path prefix" and "Backend reachable under its path prefix" scenarios
 
 ## 5. End-to-end verification
 

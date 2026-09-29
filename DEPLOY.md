@@ -44,4 +44,6 @@ sudo systemctl restart caddy                                        # NOT `reloa
 | Frontend | `127.0.0.1:4310` | `https://agents-dev.hugosantiago.dev/tickets-app/` |
 | Backend | `127.0.0.1:3010` | `https://agents-dev.hugosantiago.dev/tickets-api/api/...` |
 
+Both routes use `handle_path` in the Caddyfile (prefix stripped before forwarding) — **not** plain `handle`. Unlike `vendaly-app`/`planeaciones_frontend` (Angular dev servers started with `--serve-path`, which understand their own public prefix), this frontend is a static production build served by plain nginx with no such awareness. Using `handle` here silently breaks the app: asset requests like `/tickets-app/main-*.js` 404 into the SPA fallback (nginx serves `index.html` instead), the browser gets `text/html` where it expected JavaScript, and refuses to execute the module — resulting in a blank page with no visible error. If this route ever needs re-adding after a Caddy config loss, use `handle_path`, not `handle`.
+
 See `openspec/changes/deploy-ticket-support-system/design.md` for why the backend's public path has a doubled-looking `/api` segment, and for the full rationale behind these decisions.

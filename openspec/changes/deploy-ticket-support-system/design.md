@@ -45,7 +45,7 @@ Add to `/etc/caddy/Caddyfile`'s existing `:8000` site block, mirroring the `vend
 redir /tickets-app /tickets-app/ 308
 redir /tickets-api /tickets-api/ 308
 
-handle /tickets-app/* {
+handle_path /tickets-app/* {
 	reverse_proxy 127.0.0.1:4310
 }
 
@@ -54,7 +54,9 @@ handle_path /tickets-api/* {
 }
 ```
 
-Note the asymmetry, intentional and matching the existing convention exactly: `handle` keeps the `/tickets-app/` prefix intact when forwarding to the frontend (the Angular build's `--base-href /tickets-app/` expects to see that prefix in its own asset URLs), while `handle_path` strips `/tickets-api` before forwarding to the backend — and the backend's own `app.setGlobalPrefix('api')` (from `add-ticket-support-system`) means the full public path ends up as `/tickets-api/api/...`. This looks slightly redundant but is deliberate: it keeps this change from having to touch the backend's already-established, already-tested `/api` prefix, and mirrors exactly how `planeaciones_api` (whose backend has no internal prefix) versus a project with one would differ — documented here once so it isn't mysterious later. The frontend's production environment config points its `apiBaseUrl` at the relative path `/tickets-api/api`, so this is invisible to the app itself.
+Both use `handle_path` (stripping the prefix before forwarding), unlike `vendaly-app`/`planeaciones_frontend`, which use plain `handle` (keeping the prefix). This was gotten wrong on the first pass of this change — the original reasoning assumed the same convention as those two applied here, but it doesn't: `vendaly-app` and `planeaciones_frontend` are Angular **dev servers** started with `--serve-path /vendaly-app/` (or equivalent), which makes the dev server itself understand and expect that prefix in incoming requests. This project's frontend is a **static production build** served by plain `nginx`, which has no such awareness — its files simply live at its own docroot root, regardless of what `--base-href` was baked into the HTML for the *browser's* benefit. When Caddy forwarded requests with the prefix intact, nginx couldn't find `/tickets-app/main-*.js` on disk and fell back to serving `index.html` (matching its SPA `try_files` fallback) — which the browser then rejected as a JS module due to the mismatched `text/html` MIME type, producing a blank page with no visible error. Stripping the prefix with `handle_path` fixes it: nginx receives plain `/main-*.js`, finds the real file, and serves it with the correct MIME type. The backend side of this decision was already correct — `handle_path` there was right from the start, for the reason given below.
+
+The backend's own `app.setGlobalPrefix('api')` (from `add-ticket-support-system`) means the full public path ends up as `/tickets-api/api/...`. This looks slightly redundant but is deliberate: it keeps this change from having to touch the backend's already-established, already-tested `/api` prefix, and mirrors exactly how `planeaciones_api` (whose backend has no internal prefix) versus a project with one would differ — documented here once so it isn't mysterious later. The frontend's production environment config points its `apiBaseUrl` at the relative path `/tickets-api/api`, so this is invisible to the app itself.
 
 After editing the file, apply with `sudo systemctl restart caddy` — **not** `reload`. This host's Caddy runs with `admin off` in its global config block, which disables the admin API that `caddy reload`/`systemctl reload caddy` needs to push a live config swap; `systemctl reload caddy` fails outright (`connection refused` to `localhost:2019`) whenever `admin off` is set, regardless of what the Caddyfile change itself contains. A restart causes a brief (sub-second, observed) interruption for every project behind this shared instance, not just this one — acceptable for this host's traffic level, but worth knowing before applying any future change here too.
 
