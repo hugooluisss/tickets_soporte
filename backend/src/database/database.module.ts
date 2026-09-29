@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/user.entity';
+import { Project } from '../projects/project.entity';
+import { Category } from '../categories/category.entity';
+import { Ticket } from '../tickets/ticket.entity';
 
 @Module({
   imports: [
@@ -15,7 +18,7 @@ import { User } from '../users/user.entity';
         username: config.get<string>('DB_USERNAME', 'dev_tickets_app'),
         password: config.get<string>('DB_PASSWORD', ''),
         database: config.get<string>('DB_DATABASE', 'dev_tickets'),
-        entities: [User],
+        entities: [User, Project, Category, Ticket],
         migrations: [__dirname + '/migrations/*{.ts,.js}'],
         synchronize: false,
         migrationsRun: config.get<string>('DB_MIGRATIONS_RUN', 'false') === 'true',

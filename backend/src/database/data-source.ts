@@ -1,6 +1,10 @@
+import 'dotenv/config';
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { User } from '../users/user.entity';
+import { Project } from '../projects/project.entity';
+import { Category } from '../categories/category.entity';
+import { Ticket } from '../tickets/ticket.entity';
 
 export default new DataSource({
   type: 'mysql',
@@ -9,7 +13,7 @@ export default new DataSource({
   username: process.env.DB_USERNAME ?? 'dev_tickets_app',
   password: process.env.DB_PASSWORD ?? '',
   database: process.env.DB_DATABASE ?? 'dev_tickets',
-  entities: [User],
+  entities: [User, Project, Category, Ticket],
   migrations: [__dirname + '/migrations/*{.ts,.js}'],
   synchronize: false,
 });
