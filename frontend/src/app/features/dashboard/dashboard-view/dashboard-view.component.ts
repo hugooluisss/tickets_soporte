@@ -1,0 +1,2 @@
+import{Component,inject,signal}from'@angular/core';import{DashboardSummary}from'../../models';import{DashboardService}from'../dashboard.service';
+@Component({selector:'app-dashboard-view',templateUrl:'./dashboard-view.component.html',styleUrl:'./dashboard-view.component.css'})export class DashboardView{readonly data=signal<DashboardSummary|null>(null);readonly error=signal('');constructor(){inject(DashboardService).summary().subscribe({next:v=>this.data.set(v),error:()=>this.error.set('Unable to load dashboard.')})}}

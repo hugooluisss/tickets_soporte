@@ -3,6 +3,11 @@
     <a class="brand" routerLink="/">Support Desk</a>
     <nav aria-label="Main navigation">
       <a routerLink="/tickets" routerLinkActive="active">Tickets</a>
+      <a routerLink="/projects" routerLinkActive="active">Projects</a>
+      <a routerLink="/categories" routerLinkActive="active">Categories</a>
+      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/reports" routerLinkActive="active">Reports</a>
+      <a routerLink="/profile" routerLinkActive="active">Profile</a>
       @if (auth.hasRole('admin')) { <a routerLink="/admin" routerLinkActive="active">Administration</a> }
     </nav>
     <div class="account"><span>{{ auth.currentUser()?.name }}</span><button type="button" (click)="logout()">Log out</button></div>

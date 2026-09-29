@@ -1,14 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LoginRequest, LoginResponse } from './auth.models';
 import { environment } from '../../../environments/environment';
+import { DashboardSummary } from '../models';
 
 @Injectable({ providedIn: 'root' })
-export class AuthApiService {
+export class DashboardApiService {
   private readonly http = inject(HttpClient);
-
-  login(credentials: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${environment.apiBaseUrl}/auth/login`, credentials);
-  }
+  summary(): Observable<DashboardSummary> { return this.http.get<DashboardSummary>(`${environment.apiBaseUrl}/dashboard/summary`); }
 }

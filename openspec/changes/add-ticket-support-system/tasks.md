@@ -43,14 +43,14 @@ Component-folder rule for this phase and Phase 4: every component is generated i
 
 ## 4. Phase 4 — Frontend tickets, projects, categories, dashboard, reports, profile (frontend/) — depends on Phase 3 and Phase 2's endpoints
 
-- [ ] 4.1 Implement `ProjectsApiService`, `CategoriesApiService`, `UsersApiService`, `ProfileApiService` (data-access only, one per backend endpoint group — `ProfileApiService` calls `/api/profile*`, kept separate from `UsersApiService`) matching their backend contracts, and their feature `ProjectsService`/`CategoriesService`/`UsersService`/`ProfileService` counterparts
-- [ ] 4.2 Build project and category list/create/edit/delete components (reactive forms with validators mirroring backend constraints), each in its own component folder, and verify by running each CRUD flow in a dev server against the Phase 2 backend
-- [ ] 4.3 Build the profile view/edit component (own info, password-change form), in its own component folder, and verify the password-change flow (success and wrong-current-password) against the Phase 1 backend
-- [ ] 4.4 Implement `TicketsApiService` and `TicketsService` (filter-state management, calls to the tickets endpoint with combined filters) with unit tests covering filter composition
-- [ ] 4.5 Build the ticket list component (filter controls for keyword/project/category/priority/status/kind/date range, results table), in its own component folder, and verify each filter individually and in combination against a running backend
-- [ ] 4.6 Build the ticket create/edit form component (all fields, assignee selection from users list, validation mirroring `specs/ticket-management/spec.md`), in its own component folder, and verify create/update/delete flows end-to-end in a dev server
-- [ ] 4.7 Implement `DashboardApiService`/`DashboardService` and the dashboard view component, in its own component folder, (summary metrics, per-status/project/category breakdowns) and verify it renders correctly against both empty and populated backend data
-- [ ] 4.8 Implement `ReportsApiService`/`ReportsService` and the reports view component, in its own component folder, (filters identical to ticket list, aggregated charts by status/project/category) and verify against `specs/reporting/spec.md` scenarios including the empty-result case
+- [x] 4.1 Implement `ProjectsApiService`, `CategoriesApiService`, `UsersApiService`, `ProfileApiService` (data-access only, one per backend endpoint group — `ProfileApiService` calls `/api/profile*`, kept separate from `UsersApiService`) matching their backend contracts, and their feature `ProjectsService`/`CategoriesService`/`UsersService`/`ProfileService` counterparts
+- [x] 4.2 Build project and category list/create/edit/delete components (reactive forms with validators mirroring backend constraints), each in its own component folder, and verify by running each CRUD flow in a dev server against the Phase 2 backend
+- [x] 4.3 Build the profile view/edit component (own info, password-change form), in its own component folder, and verify the password-change flow (success and wrong-current-password) against the Phase 1 backend
+- [x] 4.4 Implement `TicketsApiService` and `TicketsService` (filter-state management, calls to the tickets endpoint with combined filters) with unit tests covering filter composition
+- [x] 4.5 Build the ticket list component (filter controls for keyword/project/category/priority/status/kind/date range, results table), in its own component folder, and verify each filter individually and in combination against a running backend
+- [x] 4.6 Build the ticket create/edit form component (all fields, assignee selection from users list, validation mirroring `specs/ticket-management/spec.md`), in its own component folder, and verify create/update/delete flows end-to-end in a dev server
+- [x] 4.7 Implement `DashboardApiService`/`DashboardService` and the dashboard view component, in its own component folder, (summary metrics, per-status/project/category breakdowns) and verify it renders correctly against both empty and populated backend data
+- [x] 4.8 Implement `ReportsApiService`/`ReportsService` and the reports view component, in its own component folder, (filters identical to ticket list, aggregated charts by status/project/category) and verify against `specs/reporting/spec.md` scenarios including the empty-result case
 
 ## 5. Cross-cutting verification
 
