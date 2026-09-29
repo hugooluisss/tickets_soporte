@@ -1,0 +1,13 @@
+<div class="grid gap-1.5">
+  <label class="text-sm font-semibold text-ink" [for]="id()">{{ label() }}</label>
+  @if (kind() === 'textarea') {
+    <textarea class="w-full rounded-md border border-border bg-white px-3 py-2 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20" [id]="id()" [formControl]="control()" [rows]="rows()" [attr.aria-invalid]="control().invalid && control().touched" [attr.aria-describedby]="control().invalid && control().touched ? id() + '-error' : null"></textarea>
+  } @else if (kind() === 'select') {
+    <select class="w-full rounded-md border border-border bg-white px-3 py-2 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20" [id]="id()" [formControl]="control()" [attr.aria-invalid]="control().invalid && control().touched" [attr.aria-describedby]="control().invalid && control().touched ? id() + '-error' : null"><ng-content select="option, ng-container" /></select>
+  } @else {
+    <input class="w-full rounded-md border border-border bg-white px-3 py-2 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20" [id]="id()" [type]="type()" [formControl]="control()" [attr.aria-invalid]="control().invalid && control().touched" [attr.aria-describedby]="control().invalid && control().touched ? id() + '-error' : null">
+  }
+  @if (control().touched && control().invalid && errorMessage()) {
+    <small class="text-sm text-danger" [id]="id() + '-error'" role="alert">{{ errorMessage() }}</small>
+  }
+</div>

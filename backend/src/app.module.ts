@@ -9,6 +9,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { TicketsModule } from './tickets/tickets.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ReportsModule } from './reports/reports.module';
+import { TicketCommentsModule } from './ticket-comments/ticket-comments.module';
 
-@Module({ imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, UsersModule, AuthModule, ProfileModule, ProjectsModule, CategoriesModule, TicketsModule, DashboardModule, ReportsModule] })
+@Module({ imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, UsersModule, AuthModule, ProfileModule, ProjectsModule, CategoriesModule, TicketsModule, TicketCommentsModule, DashboardModule, ReportsModule] })
 export class AppModule {}

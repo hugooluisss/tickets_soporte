@@ -29,4 +29,15 @@ describe('TicketsRepository filters', () => {
     expect(clauses.slice(1).map((entry) => entry[1])).toEqual(expect.arrayContaining([{ projectId: 'p1' }, { categoryId: 'c1' }, { priority: 'high' }, { status: 'pending' }, { kind: 'bug' }, { dateFrom: '2026-01-01 00:00:00' }, { dateTo: '2026-01-31 23:59:59.999' }]));
     expect(qb.orderBy).toHaveBeenCalledWith('ticket.createdAt', 'DESC');
   });
+  it('returns all priority keys and a zero-filled seven-day trend when there is no activity', async () => {
+    const builders: any[] = [];
+    const repository: any = { createQueryBuilder: jest.fn(() => { const qb: any = {}; for (const method of ['select', 'addSelect', 'where', 'andWhere', 'groupBy', 'orderBy', 'take']) qb[method] = jest.fn(() => qb); qb.getRawMany = jest.fn().mockResolvedValue([]); qb.getRawOne = jest.fn().mockResolvedValue({ count: 0 }); qb.getMany = jest.fn().mockResolvedValue([]); builders.push(qb); return qb; }) };
+    const summary = await new TicketsRepository(repository).dashboardAggregates();
+    expect(summary.byPriority).toEqual([{ key: 'high', count: 0 }, { key: 'medium', count: 0 }, { key: 'low', count: 0 }]);
+    expect(summary.activeTicketsTotal).toBe(0);
+    expect(summary.ticketsTrend).toHaveLength(7);
+    expect(summary.ticketsTrend.every((day) => day.created === 0 && day.solved === 0)).toBe(true);
+    expect(summary.recentTickets).toEqual([]);
+    expect(builders).toHaveLength(5);
+  });
 });

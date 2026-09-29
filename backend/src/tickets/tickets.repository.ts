@@ -20,6 +20,21 @@ export class TicketsRepository {
     const pending = Number((byStatus.find((row: any) => row.key === 'pending') ?? {}).count ?? 0);
     return { pending, byStatus: this.numeric(byStatus), byProject: this.numeric(byProject), byCategory: this.numeric(byCategory) };
   }
+  async dashboardAggregates() {
+    const [priorityRows, activeRows, createdRows, solvedRows, recentTickets] = await Promise.all([
+      this.repository.createQueryBuilder('ticket').select('ticket.priority', 'key').addSelect('COUNT(ticket.id)', 'count').where('ticket.status NOT IN (:...terminal)', { terminal: ['done', 'cancelled'] }).groupBy('ticket.priority').getRawMany(),
+      this.repository.createQueryBuilder('ticket').select('COUNT(ticket.id)', 'count').where('ticket.status NOT IN (:...terminal)', { terminal: ['done', 'cancelled'] }).getRawOne(),
+      this.repository.createQueryBuilder('ticket').select('DATE_FORMAT(ticket.createdAt, \'%Y-%m-%d\')', 'date').addSelect('COUNT(ticket.id)', 'count').where('ticket.createdAt >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)').andWhere('ticket.createdAt < DATE_ADD(CURDATE(), INTERVAL 1 DAY)').groupBy("DATE_FORMAT(ticket.createdAt, '%Y-%m-%d')").getRawMany(),
+      this.repository.createQueryBuilder('ticket').select('DATE_FORMAT(ticket.updatedAt, \'%Y-%m-%d\')', 'date').addSelect('COUNT(ticket.id)', 'count').where('ticket.status = :status', { status: 'done' }).andWhere('ticket.updatedAt >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)').andWhere('ticket.updatedAt < DATE_ADD(CURDATE(), INTERVAL 1 DAY)').groupBy("DATE_FORMAT(ticket.updatedAt, '%Y-%m-%d')").getRawMany(),
+      this.repository.createQueryBuilder('ticket').select(['ticket.id', 'ticket.title', 'ticket.createdAt', 'ticket.status']).orderBy('ticket.createdAt', 'DESC').take(5).getMany(),
+    ]);
+    const priorityMap = new Map<string, number>(priorityRows.map((row: any) => [row.key, Number(row.count)]));
+    const byPriority = ['high', 'medium', 'low'].map((key) => ({ key, count: priorityMap.get(key) ?? 0 }));
+    const createdMap = new Map<string, number>(createdRows.map((row: any) => [row.date, Number(row.count)]));
+    const solvedMap = new Map<string, number>(solvedRows.map((row: any) => [row.date, Number(row.count)]));
+    const ticketsTrend = Array.from({ length: 7 }, (_, index) => { const day = new Date(); day.setHours(0, 0, 0, 0); day.setDate(day.getDate() - 6 + index); const date = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`; return { date, created: createdMap.get(date) ?? 0, solved: solvedMap.get(date) ?? 0 }; });
+    return { byPriority, activeTicketsTotal: Number(activeRows?.count ?? 0), ticketsTrend, recentTickets: recentTickets.map(({ id, title, createdAt, status }) => ({ id, title, createdAt: createdAt.toISOString(), status })) };
+  }
   async aggregates(filter: TicketFilter): Promise<{ byStatus: any[]; byProject: any[]; byCategory: any[] }> {
     const [byStatus, byProject, byCategory] = await Promise.all([
       this.aggregateFiltered(filter).select('ticket.status', 'key').addSelect('COUNT(ticket.id)', 'count').groupBy('ticket.status').getRawMany(),

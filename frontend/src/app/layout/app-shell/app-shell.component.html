@@ -1,16 +1,16 @@
 <div class="app-layout">
-  <header>
-    <a class="brand" routerLink="/">Support Desk</a>
-    <nav aria-label="Main navigation">
-      <a routerLink="/tickets" routerLinkActive="active">Tickets</a>
-      <a routerLink="/projects" routerLinkActive="active">Projects</a>
-      <a routerLink="/categories" routerLinkActive="active">Categories</a>
-      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-      <a routerLink="/reports" routerLinkActive="active">Reports</a>
-      <a routerLink="/profile" routerLinkActive="active">Profile</a>
-      @if (auth.hasRole('admin')) { <a routerLink="/admin" routerLinkActive="active">Administration</a> }
+  <aside class="sidebar">
+    <a class="brand-box" routerLink="/dashboard"><span class="brand-mark"><app-icon name="dashboard" /></span><span><strong>{{ 'app.title' | translate }}</strong><small>{{ 'dashboard.eyebrow' | translate }}</small></span></a>
+    <nav [attr.aria-label]="'nav.main' | translate">
+      <p class="nav-caption">{{ 'nav.main' | translate }}</p>
+      <a routerLink="/tickets" routerLinkActive="active"><app-icon name="tickets"/><span>{{ 'nav.tickets' | translate }}</span></a>
+      <a routerLink="/projects" routerLinkActive="active"><app-icon name="projects"/><span>{{ 'nav.projects' | translate }}</span></a>
+      <a routerLink="/categories" routerLinkActive="active"><app-icon name="categories"/><span>{{ 'nav.categories' | translate }}</span></a>
+      <a routerLink="/reports" routerLinkActive="active"><app-icon name="reports"/><span>{{ 'nav.reports' | translate }}</span></a>
+      <a routerLink="/profile" routerLinkActive="active"><app-icon name="profile"/><span>{{ 'nav.profile' | translate }}</span></a>
+      @if (auth.hasRole('admin')) { <a routerLink="/admin" routerLinkActive="active"><app-icon name="administration"/><span>{{ 'nav.administration' | translate }}</span></a> }
     </nav>
-    <div class="account"><span>{{ auth.currentUser()?.name }}</span><button type="button" (click)="logout()">Log out</button></div>
-  </header>
+    <div class="account"><div class="user"><span class="avatar">{{ auth.currentUser()?.name?.slice(0, 1) }}</span><span class="user-details"><strong>{{ auth.currentUser()?.name }}</strong><small>{{ auth.currentUser()?.email }}</small></span></div><app-language-toggle /><button type="button" (click)="logout()" [attr.aria-label]="'account.logout' | translate"><app-icon name="logout"/><span>{{ 'account.logout' | translate }}</span></button></div>
+  </aside>
   <main><router-outlet /></main>
 </div>

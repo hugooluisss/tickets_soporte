@@ -5,6 +5,7 @@ import { User } from '../users/user.entity';
 import { Project } from '../projects/project.entity';
 import { Category } from '../categories/category.entity';
 import { Ticket } from '../tickets/ticket.entity';
+import { TicketComment } from '../ticket-comments/ticket-comment.entity';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { Ticket } from '../tickets/ticket.entity';
         username: config.get<string>('DB_USERNAME', 'dev_tickets_app'),
         password: config.get<string>('DB_PASSWORD', ''),
         database: config.get<string>('DB_DATABASE', 'dev_tickets'),
-        entities: [User, Project, Category, Ticket],
+        entities: [User, Project, Category, Ticket, TicketComment],
         migrations: [__dirname + '/migrations/*{.ts,.js}'],
         synchronize: false,
         migrationsRun: config.get<string>('DB_MIGRATIONS_RUN', 'false') === 'true',

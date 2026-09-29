@@ -1,1 +1,1 @@
-export const environment = { apiBaseUrl: 'http://localhost:3001/api' };
+export const environment = { apiBaseUrl: '/tickets-api/api' };

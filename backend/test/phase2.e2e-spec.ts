@@ -15,12 +15,15 @@ import { DashboardService } from '../src/dashboard/dashboard.service';
 import { ReportsController } from '../src/reports/reports.controller';
 import { ReportsService } from '../src/reports/reports.service';
 import { HttpExceptionFilter } from '../src/common/filters/http-exception.filter';
+import { TicketCommentsController } from '../src/ticket-comments/ticket-comments.controller';
+import { TicketCommentsService } from '../src/ticket-comments/ticket-comments.service';
 
 const projects: any = { findAll: jest.fn(), create: jest.fn(), findById: jest.fn(), update: jest.fn(), delete: jest.fn(), findTickets: jest.fn() };
 const categories: any = { findAll: jest.fn(), create: jest.fn(), findById: jest.fn(), update: jest.fn(), delete: jest.fn() };
 const tickets: any = { findAll: jest.fn(), create: jest.fn(), findById: jest.fn(), update: jest.fn(), delete: jest.fn() };
 const dashboard: any = { summary: jest.fn() }; const reports: any = { generate: jest.fn() };
-@Module({ controllers: [ProjectsController, CategoriesController, TicketsController, DashboardController, ReportsController], providers: [Reflector, { provide: ProjectsService, useValue: projects }, { provide: CategoriesService, useValue: categories }, { provide: TicketsService, useValue: tickets }, { provide: DashboardService, useValue: dashboard }, { provide: ReportsService, useValue: reports }] }) class Phase2HttpModule {}
+const comments: any = { create: jest.fn(), listByTicket: jest.fn() };
+@Module({ controllers: [ProjectsController, CategoriesController, TicketsController, TicketCommentsController, DashboardController, ReportsController], providers: [Reflector, { provide: ProjectsService, useValue: projects }, { provide: CategoriesService, useValue: categories }, { provide: TicketsService, useValue: tickets }, { provide: TicketCommentsService, useValue: comments }, { provide: DashboardService, useValue: dashboard }, { provide: ReportsService, useValue: reports }] }) class Phase2HttpModule {}
 
 describe('Phase 2 API (e2e)', () => {
   let app: INestApplication;
@@ -68,9 +71,19 @@ describe('Phase 2 API (e2e)', () => {
   });
 
   it('serves dashboard summary and filtered report routes', async () => {
-    dashboard.summary.mockResolvedValue({ pending: 1, byStatus: [{ key: 'pending', count: 1 }], byProject: [], byCategory: [] }); reports.generate.mockResolvedValue({ tickets: [], byStatus: [{ key: 'done', count: 0 }], byProject: [{ id: null, name: 'unassigned project', count: 0 }], byCategory: [{ id: null, name: 'unassigned category', count: 0 }] });
-    await request(app.getHttpServer()).get('/api/dashboard/summary').set('Authorization', 'Bearer admin').expect(200).expect(({ body }) => expect(body.pending).toBe(1));
+    dashboard.summary.mockResolvedValue({ pending: 1, byStatus: [{ key: 'pending', count: 1 }], byProject: [], byCategory: [], totalTickets: 1, clientReplies: 0, staffReplies: 0, ticketsWithoutReply: 1, replyTimeSeries: Array.from({ length: 14 }, (_, i) => ({ date: String(i), count: 0 })), ticketsTrend: Array.from({ length: 7 }, (_, i) => ({ date: String(i), created: 0, solved: 0 })), byPriority: [{ key: 'high', count: 0 }, { key: 'medium', count: 1 }, { key: 'low', count: 0 }], activeTicketsTotal: 1, recentTickets: [] }); reports.generate.mockResolvedValue({ tickets: [], byStatus: [{ key: 'done', count: 0 }], byProject: [{ id: null, name: 'unassigned project', count: 0 }], byCategory: [{ id: null, name: 'unassigned category', count: 0 }] });
+    await request(app.getHttpServer()).get('/api/dashboard/summary').set('Authorization', 'Bearer admin').expect(200).expect(({ body }) => expect(body).toMatchObject({ pending: 1, totalTickets: 1, ticketsWithoutReply: 1, activeTicketsTotal: 1, recentTickets: [], replyTimeSeries: expect.any(Array), ticketsTrend: expect.any(Array), byPriority: expect.any(Array) }));
     await request(app.getHttpServer()).get('/api/reports?projectId=p1&dateFrom=2026-01-01&dateTo=2026-01-31').set('Authorization', 'Bearer admin').expect(200).expect(({ body }) => expect(body.tickets).toEqual([]));
     expect(reports.generate).toHaveBeenCalledWith(expect.objectContaining({ projectId: 'p1', dateFrom: '2026-01-01' }));
+  });
+
+  it('creates and lists ticket comments and rejects empty bodies and missing tickets', async () => {
+    comments.create.mockImplementation((ticketId: string) => ticketId === 'missing' ? Promise.reject(new (require('@nestjs/common').NotFoundException)('Ticket not found')) : Promise.resolve({ id: 'comment-1', ticketId: 't1', authorId: 'user-1', body: 'Reply' }));
+    comments.listByTicket.mockResolvedValue([{ id: 'comment-1', role: 'client' }]);
+    await request(app.getHttpServer()).post('/api/tickets/t1/comments').set('Authorization', 'Bearer admin').send({}).expect(400);
+    await request(app.getHttpServer()).post('/api/tickets/missing/comments').set('Authorization', 'Bearer admin').send({ body: 'Reply' }).expect(404);
+    await request(app.getHttpServer()).post('/api/tickets/t1/comments').set('Authorization', 'Bearer admin').send({ body: 'Reply' }).expect(201);
+    expect(comments.create).toHaveBeenCalledWith('t1', 'user-1', 'Reply');
+    await request(app.getHttpServer()).get('/api/tickets/t1/comments').set('Authorization', 'Bearer admin').expect(200).expect(({ body }) => expect(body).toEqual([{ id: 'comment-1', role: 'client' }]));
   });
 });

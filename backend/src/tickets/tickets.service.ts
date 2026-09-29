@@ -29,6 +29,7 @@ export class TicketsService {
   }
   async delete(id: string): Promise<void> { if (!(await this.tickets.delete(id))) throw new NotFoundException('Ticket not found'); }
   summary() { return this.tickets.summary(); }
+  dashboardAggregates() { return this.tickets.dashboardAggregates(); }
   async report(filter: TicketFilter) {
     const [tickets, aggregates] = await Promise.all([this.findAll(filter), this.tickets.aggregates(filter)]);
     const statuses = Object.values(TicketStatus).map((status) => ({ key: status, count: Number(aggregates.byStatus.find((item) => item.key === status)?.count ?? 0) }));

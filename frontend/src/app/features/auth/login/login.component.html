@@ -1,16 +1,12 @@
-<main class="login-page">
-  <section class="login-card" aria-labelledby="login-title">
-    <h1 id="login-title">Sign in</h1>
-    <p>Access your support workspace.</p>
-    @if (errorMessage()) { <div class="error" role="alert">{{ errorMessage() }}</div> }
-    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-      <label for="email">Email</label>
-      <input id="email" type="email" autocomplete="username" formControlName="email">
-      @if (form.controls.email.touched && form.controls.email.invalid) { <small>Enter a valid email address.</small> }
-      <label for="password">Password</label>
-      <input id="password" type="password" autocomplete="current-password" formControlName="password">
-      @if (form.controls.password.touched && form.controls.password.hasError('required')) { <small>Password is required.</small> }
-      <button type="submit" [disabled]="submitting()">{{ submitting() ? 'Signing in…' : 'Sign in' }}</button>
+<main class="grid min-h-screen place-items-center bg-slate-100 p-4">
+  <section class="box-border w-full max-w-md rounded-xl bg-white p-8 shadow-xl" aria-labelledby="login-title">
+    <h1 class="mb-2 text-2xl font-bold" id="login-title">{{ 'login.title' | translate }}</h1>
+    <p class="mb-6 text-muted">{{ 'login.subtitle' | translate }}</p>
+    @if (errorMessage()) { <div class="mb-4 rounded-md bg-danger-bg p-3 text-danger" role="alert">{{ errorMessage() }}</div> }
+    <form class="grid gap-3" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <app-form-field id="email" [label]="'login.email' | translate" type="email" [control]="form.controls.email" [errorMessage]="'login.emailError' | translate" />
+      <app-form-field id="password" [label]="'login.password' | translate" type="password" [control]="form.controls.password" [errorMessage]="'login.passwordError' | translate" />
+      <button class="mt-2 rounded-md bg-brand px-3 py-3 font-semibold text-white hover:bg-brand-hover disabled:cursor-wait disabled:opacity-65" type="submit" [disabled]="submitting()">{{ submitting() ? ('login.signingIn' | translate) : ('login.signIn' | translate) }}</button>
     </form>
   </section>
 </main>
