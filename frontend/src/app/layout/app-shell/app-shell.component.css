@@ -1,0 +1,12 @@
+:host { display: block; min-height: 100vh; }
+.app-layout { min-height: 100vh; background: #f3f5f8; }
+header { min-height: 4rem; padding: 0 2rem; display: flex; align-items: center; gap: 2rem; background: #173b67; color: white; }
+a { color: inherit; text-decoration: none; }
+.brand { font-size: 1.1rem; font-weight: 700; white-space: nowrap; }
+nav { display: flex; align-items: center; gap: 1rem; flex: 1; }
+nav a { padding: .5rem; opacity: .85; }
+nav a.active { opacity: 1; text-decoration: underline; }
+.account { display: flex; align-items: center; gap: 1rem; }
+button { padding: .5rem .8rem; border: 1px solid #ffffff80; border-radius: .375rem; background: transparent; color: white; cursor: pointer; }
+main { padding: 2rem; }
+@media (max-width: 600px) { header { padding: .75rem 1rem; flex-wrap: wrap; gap: .75rem; } nav { order: 3; flex-basis: 100%; } .account { margin-left: auto; } main { padding: 1rem; } }

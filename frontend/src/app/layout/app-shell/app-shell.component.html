@@ -1,0 +1,11 @@
+<div class="app-layout">
+  <header>
+    <a class="brand" routerLink="/">Support Desk</a>
+    <nav aria-label="Main navigation">
+      <a routerLink="/tickets" routerLinkActive="active">Tickets</a>
+      @if (auth.hasRole('admin')) { <a routerLink="/admin" routerLinkActive="active">Administration</a> }
+    </nav>
+    <div class="account"><span>{{ auth.currentUser()?.name }}</span><button type="button" (click)="logout()">Log out</button></div>
+  </header>
+  <main><router-outlet /></main>
+</div>
