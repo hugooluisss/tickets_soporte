@@ -17,7 +17,7 @@ async function run(): Promise<void> {
     assert.ok((await repository.findAll()).some((user) => user.id === created.id));
     assert.equal((await repository.update(created.id, { isActive: false }))?.isActive, false);
     assert.equal(await repository.delete(created.id), true);
-    console.log('PostgreSQL migration and UsersRepository CRUD smoke test passed');
+    console.log('MySQL migration and UsersRepository CRUD smoke test passed');
   } finally {
     await dataSource.destroy();
   }

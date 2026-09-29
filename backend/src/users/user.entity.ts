@@ -24,15 +24,15 @@ export class User {
   @Column({ name: 'last_name', type: 'varchar', length: 100 })
   lastName!: string;
 
-  @Column({ type: 'enum', enum: UserRole, enumName: 'users_role_enum', default: UserRole.USER })
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role!: UserRole;
 
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive!: boolean;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  @CreateDateColumn({ name: 'created_at', type: 'datetime' })
   createdAt!: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+  @UpdateDateColumn({ name: 'updated_at', type: 'datetime' })
   updatedAt!: Date;
 }
