@@ -11,6 +11,18 @@
       <app-form-field id="ticket-category" [label]="'common.category' | translate" kind="select" [control]="form.controls.categoryId"><option value="">{{ 'ticket.noCategory' | translate }}</option>@for(c of categories();track c.id){<option [value]="c.id">{{c.name}}</option>}</app-form-field>
       <app-form-field id="ticket-assignee" [label]="'ticket.assignee' | translate" kind="select" [control]="form.controls.assignedToId"><option value="">{{ 'ticket.unassigned' | translate }}</option>@for(u of users();track u.id){<option [value]="u.id">{{u.firstName}} {{u.lastName}} ({{u.email}})</option>}</app-form-field>
     </div>
+    @if(ticket(); as currentTicket){
+      @if(!currentTicket.createdBy){
+        <section class="rounded-md border border-slate-200 bg-slate-50 p-4" aria-labelledby="reported-by-heading">
+          <h2 id="reported-by-heading" class="mb-3 text-sm font-semibold">{{ 'ticket.reportedBy' | translate }}</h2>
+          <dl class="grid gap-3 sm:grid-cols-3">
+            @if(currentTicket.reporterName){<div><dt class="text-xs text-slate-500">{{ 'ticket.reporterName' | translate }}</dt><dd>{{currentTicket.reporterName}}</dd></div>}
+            @if(currentTicket.reporterEmail){<div><dt class="text-xs text-slate-500">{{ 'ticket.reporterEmail' | translate }}</dt><dd><a class="text-brand underline" [href]="'mailto:' + currentTicket.reporterEmail">{{currentTicket.reporterEmail}}</a></dd></div>}
+            @if(currentTicket.reporterLocation){<div><dt class="text-xs text-slate-500">{{ 'ticket.reporterLocation' | translate }}</dt><dd>{{currentTicket.reporterLocation}}</dd></div>}
+          </dl>
+        </section>
+      }
+    }
     <app-form-field id="ticket-description" [label]="'common.description' | translate" kind="textarea" [rows]="5" [control]="form.controls.description" />
     <div class="mt-2 flex justify-between"><a class="text-brand underline" routerLink="/tickets">{{ 'common.cancel' | translate }}</a><button class="rounded-md bg-brand px-4 py-2 font-semibold text-white disabled:opacity-65" [disabled]="saving()">{{ (saving() ? 'common.saving' : 'ticket.save') | translate }}</button></div>
   </form>

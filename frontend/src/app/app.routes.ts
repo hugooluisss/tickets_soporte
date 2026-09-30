@@ -13,9 +13,11 @@ import { DashboardView } from './features/dashboard/dashboard-view/dashboard-vie
 import { ReportsView } from './features/reports/reports-view/reports-view.component';
 import { UserList } from './features/users/user-list/user-list.component';
 import { UserForm } from './features/users/user-form/user-form.component';
+import { PublicTicketFormComponent } from './features/tickets/public-ticket-form/public-ticket-form.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  { path: 'public/projects/:projectId/new-ticket', component: PublicTicketFormComponent },
   {
     path: '', component: AppShellComponent, canActivate: [authGuard],
     children: [

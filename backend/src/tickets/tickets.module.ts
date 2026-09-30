@@ -9,5 +9,6 @@ import { Ticket } from './ticket.entity';
 import { TicketsController } from './tickets.controller';
 import { TicketsRepository } from './tickets.repository';
 import { TicketsService } from './tickets.service';
-@Module({ imports: [TypeOrmModule.forFeature([Ticket, Project]), AuthModule, UsersModule, CategoriesModule], controllers: [TicketsController], providers: [TicketsRepository, TicketsService, ProjectsRepository], exports: [TicketsService, TicketsRepository] })
+import { NotificationsModule } from '../notifications/notifications.module';
+@Module({ imports: [TypeOrmModule.forFeature([Ticket, Project]), AuthModule, UsersModule, CategoriesModule, NotificationsModule], controllers: [TicketsController], providers: [TicketsRepository, TicketsService, ProjectsRepository], exports: [TicketsService, TicketsRepository] })
 export class TicketsModule {}

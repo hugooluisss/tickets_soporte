@@ -10,6 +10,7 @@ import { TicketsModule } from './tickets/tickets.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ReportsModule } from './reports/reports.module';
 import { TicketCommentsModule } from './ticket-comments/ticket-comments.module';
+import { PublicTicketsModule } from './public-tickets/public-tickets.module';
 
-@Module({ imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, UsersModule, AuthModule, ProfileModule, ProjectsModule, CategoriesModule, TicketsModule, TicketCommentsModule, DashboardModule, ReportsModule] })
+@Module({ imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, UsersModule, AuthModule, ProfileModule, ProjectsModule, CategoriesModule, TicketsModule, TicketCommentsModule, DashboardModule, ReportsModule, PublicTicketsModule] })
 export class AppModule {}

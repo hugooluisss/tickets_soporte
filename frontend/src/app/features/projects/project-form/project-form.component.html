@@ -4,6 +4,7 @@
   <form class="grid gap-4 rounded-lg border border-slate-200 bg-white p-6" [formGroup]="form" (ngSubmit)="save()" novalidate>
     <app-form-field id="project-name" [label]="'common.name' | translate" [control]="form.controls.name" [errorMessage]="'project.nameError' | translate" />
     <app-form-field id="project-description" [label]="'common.description' | translate" kind="textarea" [rows]="4" [control]="form.controls.description" />
+    <app-form-field id="project-webhook-url" [label]="'project.webhookUrl' | translate" type="url" [control]="form.controls.webhookUrl" [errorMessage]="'project.webhookUrlError' | translate" />
     <div class="mt-2 flex justify-between"><a class="text-brand underline" routerLink="/projects">{{ 'common.cancel' | translate }}</a><button class="rounded-md bg-brand px-4 py-2 font-semibold text-white disabled:opacity-65" [disabled]="saving()">{{saving()?'Saving…':'Save project'}}</button></div>
   </form>
 </section>

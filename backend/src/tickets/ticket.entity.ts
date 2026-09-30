@@ -18,8 +18,11 @@ export class Ticket {
   @ManyToOne(() => Project, { nullable: true, onDelete: 'SET NULL' }) @JoinColumn({ name: 'project_id' }) project!: Project | null;
   @Column({ name: 'category_id', type: 'char', length: 36, nullable: true }) categoryId!: string | null;
   @ManyToOne(() => Category, { nullable: true, onDelete: 'SET NULL' }) @JoinColumn({ name: 'category_id' }) category!: Category | null;
-  @Column({ name: 'created_by_id', type: 'char', length: 36 }) createdById!: string;
-  @ManyToOne(() => User, { onDelete: 'RESTRICT' }) @JoinColumn({ name: 'created_by_id' }) createdBy!: User;
+  @Column({ name: 'created_by_id', type: 'char', length: 36, nullable: true }) createdById!: string | null;
+  @ManyToOne(() => User, { nullable: true, onDelete: 'RESTRICT' }) @JoinColumn({ name: 'created_by_id' }) createdBy!: User | null;
+  @Column({ name: 'reporter_name', type: 'varchar', length: 150, nullable: true }) reporterName!: string | null;
+  @Column({ name: 'reporter_email', type: 'varchar', length: 255, nullable: true }) reporterEmail!: string | null;
+  @Column({ name: 'reporter_location', type: 'varchar', length: 255, nullable: true }) reporterLocation!: string | null;
   @Column({ name: 'assigned_to_id', type: 'char', length: 36, nullable: true }) assignedToId!: string | null;
   @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' }) @JoinColumn({ name: 'assigned_to_id' }) assignedTo!: User | null;
   @CreateDateColumn({ name: 'created_at', type: 'datetime' }) createdAt!: Date;

@@ -15,7 +15,8 @@ describe('ProjectsService', () => {
   it('creates projects and rejects a missing project on read or delete', async () => {
     await expect(service.create({ name: '   ' })).rejects.toBeInstanceOf(BadRequestException);
     projects.create.mockResolvedValue({ id: 'p1', name: 'Alpha', description: null });
-    expect(await service.create({ name: ' Alpha ' })).toMatchObject({ name: 'Alpha' });
+    expect(await service.create({ name: ' Alpha ', webhookUrl: 'https://example.com/hook' })).toMatchObject({ name: 'Alpha' });
+    expect(projects.create).toHaveBeenCalledWith(expect.objectContaining({ webhookUrl: 'https://example.com/hook' }));
     projects.findById.mockResolvedValue(null);
     await expect(service.findById('missing')).rejects.toBeInstanceOf(NotFoundException);
     projects.delete.mockResolvedValue(false);
@@ -27,5 +28,11 @@ describe('ProjectsService', () => {
     expect(await service.update('p1', { name: 'New' })).toMatchObject({ name: 'New', ticketCount: 0 });
     expect(await service.findTickets('p1')).toEqual([{ projectId: 'p1' }]);
     expect(tickets.findAll).toHaveBeenCalledWith({ projectId: 'p1' });
+  });
+  it('clears a project webhook URL when explicitly set to null', async () => {
+    projects.findById.mockResolvedValue({ id: 'p1', name: 'Alpha', webhookUrl: 'https://example.com/hook' });
+    projects.update.mockResolvedValue({ id: 'p1', name: 'Alpha', webhookUrl: null }); projects.ticketCounts.mockResolvedValue(new Map());
+    await service.update('p1', { webhookUrl: null });
+    expect(projects.update).toHaveBeenCalledWith('p1', { webhookUrl: null });
   });
 });

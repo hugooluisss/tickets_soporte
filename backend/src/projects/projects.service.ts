@@ -8,8 +8,8 @@ export class ProjectsService {
   constructor(private readonly projects: ProjectsRepository, private readonly tickets: TicketsService) {}
   async findAll(): Promise<Project[]> { return this.attachCounts(await this.projects.findAll()); }
   async findById(id: string): Promise<Project> { const project = await this.projects.findById(id); if (!project) throw new NotFoundException('Project not found'); return (await this.attachCounts([project]))[0]; }
-  async create(input: { name: string; description?: string }): Promise<Project> { const name = input.name.trim(); if (!name) throw new BadRequestException('Project name is required'); return this.projects.create({ name, description: input.description ?? null }); }
-  async update(id: string, input: Partial<{ name: string; description: string }>): Promise<Project> {
+  async create(input: { name: string; description?: string; webhookUrl?: string }): Promise<Project> { const name = input.name.trim(); if (!name) throw new BadRequestException('Project name is required'); return this.projects.create({ name, description: input.description ?? null, webhookUrl: input.webhookUrl ?? null }); }
+  async update(id: string, input: Partial<{ name: string; description: string; webhookUrl: string | null }>): Promise<Project> {
     await this.findById(id);
     if (input.name !== undefined && !input.name.trim()) throw new BadRequestException('Project name is required');
     const updated = await this.projects.update(id, { ...input, ...(input.name !== undefined ? { name: input.name.trim() } : {}) });
