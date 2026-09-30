@@ -40,7 +40,7 @@ export class TicketsService {
     const created = await this.createWithTrackingToken({
       title: input.title.trim(), description: input.description ?? null, kind: input.kind ?? TicketKind.TICKET,
       priority: TicketPriority.MEDIUM, status: TicketStatus.PENDING, projectId, categoryId: null, assignedToId: null,
-      createdById: null, reporterName: input.reporterName.trim(), reporterEmail: input.reporterEmail.trim(), reporterLocation: input.reporterLocation?.trim() || null,
+      createdById: null, reporterName: input.reporterName.trim(), reporterEmail: input.reporterEmail.trim(), reporterLocation: input.reporterLocation?.trim() || null, reporterEmailNotifications: input.reporterEmailNotifications ?? false,
     });
     this.notifyWebhook(created, project);
     return created;
@@ -51,7 +51,7 @@ export class TicketsService {
     await this.validateReferences(input);
     const updated = await this.tickets.update(id, { ...input, ...(input.title !== undefined ? { title: input.title.trim() } : {}) });
     if (!updated) throw new NotFoundException('Ticket not found');
-    if (updated.reporterEmail) this.emails.notify(updated);
+    if (updated.reporterEmail && updated.reporterEmailNotifications) this.emails.notify(updated);
     return updated;
   }
   async delete(id: string): Promise<void> { if (!(await this.tickets.delete(id))) throw new NotFoundException('Ticket not found'); }
