@@ -2,6 +2,17 @@
 
 An internal support ticket system for organizing tickets by project and category, tracking client and staff replies, and supporting day-to-day administration. It includes a support overview dashboard with reply metrics, ticket reports, administrator user management, and an English/Spanish interface.
 
+## Features
+
+- Manage tickets, projects, categories, and user accounts; assign tickets and track their status, priority, kind, and client/staff replies.
+- View a support dashboard with reply metrics, ticket reports, recent activity, and ticket breakdowns.
+- Share a per-project public submission link. Visitors can submit a ticket with their name, email, and location; projects can optionally send a webhook when a ticket is submitted.
+- Let reporters explicitly opt in to email updates when submitting a ticket. The checkbox is off by default.
+- Give each ticket an opaque public tracking link and a client-generated QR code. The public tracking page shows read-only ticket details and status; staff can also access the link from the ticket form.
+- Add notes to tickets as any authenticated user; only administrators can delete notes. Cmd/Ctrl+Enter submits a note.
+- Manage accounts and roles through administrator user management. Table row actions use accessible icon buttons.
+- Use the Tailwind-based design system and switch between English and Spanish.
+
 ## Tech stack
 
 - **Backend:** NestJS, TypeORM, MySQL; feature modules for authentication, users, profile, projects, categories, tickets, ticket comments, dashboard, and reports.
@@ -59,4 +70,4 @@ cd frontend && npm test
 
 See [`DEPLOY.md`](DEPLOY.md) for production deployment instructions.
 
-Major feature specifications and design documents are maintained under [`openspec/changes/`](openspec/changes/).
+Major feature specifications and design documents are maintained under [`openspec/changes/`](openspec/changes/), including archived changes and current proposals.
