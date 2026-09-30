@@ -11,16 +11,22 @@ import { TicketsRepository } from './tickets.repository';
 import { WebhookNotifierService } from '../notifications/webhook-notifier.service';
 import { EmailNotifierService } from '../notifications/email-notifier.service';
 import { CreatePublicTicketDto } from '../public-tickets/dto/create-public-ticket.dto';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class TicketsService {
   constructor(private readonly tickets: TicketsRepository, private readonly users: UsersRepository, private readonly projects: ProjectsRepository, private readonly categories: CategoriesRepository, private readonly webhooks: WebhookNotifierService, private readonly emails: EmailNotifierService) {}
   findAll(filter: TicketFilter = {}): Promise<Ticket[]> { return this.tickets.findAll(filter); }
   async findById(id: string): Promise<Ticket> { const ticket = await this.tickets.findById(id); if (!ticket) throw new NotFoundException('Ticket not found'); return ticket; }
+  async findPublicByTrackingToken(token: string) {
+    const ticket = await this.tickets.findByTrackingToken(token);
+    if (!ticket) throw new NotFoundException('Ticket not found');
+    return { title: ticket.title, status: ticket.status, createdAt: ticket.createdAt, kind: ticket.kind, ...(ticket.description != null ? { description: ticket.description } : {}) };
+  }
   async create(input: Partial<Ticket>, creatorId: string): Promise<Ticket> {
     if (!input.title?.trim()) throw new BadRequestException('Title is required');
     const project = await this.validateReferences(input);
-    const created = await this.tickets.create({ ...input, title: input.title.trim(), description: input.description ?? null, kind: input.kind ?? TicketKind.TICKET, priority: input.priority ?? TicketPriority.MEDIUM, status: input.status ?? TicketStatus.PENDING, projectId: input.projectId ?? null, categoryId: input.categoryId ?? null, assignedToId: input.assignedToId ?? null, createdById: creatorId, reporterName: null, reporterEmail: null, reporterLocation: null });
+    const created = await this.createWithTrackingToken({ ...input, title: input.title.trim(), description: input.description ?? null, kind: input.kind ?? TicketKind.TICKET, priority: input.priority ?? TicketPriority.MEDIUM, status: input.status ?? TicketStatus.PENDING, projectId: input.projectId ?? null, categoryId: input.categoryId ?? null, assignedToId: input.assignedToId ?? null, createdById: creatorId, reporterName: null, reporterEmail: null, reporterLocation: null });
     this.notifyWebhook(created, project);
     return created;
   }
@@ -31,7 +37,7 @@ export class TicketsService {
     const project = await this.projects.findById(projectId);
     if (!project) throw new BadRequestException('Project does not exist');
     if (input.kind !== undefined && !Object.values(TicketKind).includes(input.kind)) throw new BadRequestException('Invalid kind');
-    const created = await this.tickets.create({
+    const created = await this.createWithTrackingToken({
       title: input.title.trim(), description: input.description ?? null, kind: input.kind ?? TicketKind.TICKET,
       priority: TicketPriority.MEDIUM, status: TicketStatus.PENDING, projectId, categoryId: null, assignedToId: null,
       createdById: null, reporterName: input.reporterName.trim(), reporterEmail: input.reporterEmail.trim(), reporterLocation: input.reporterLocation?.trim() || null,
@@ -77,5 +83,16 @@ export class TicketsService {
       ...(ticket.reporterName ? { reporterName: ticket.reporterName } : {}),
       ...(ticket.reporterEmail ? { reporterEmail: ticket.reporterEmail } : {}),
     });
+  }
+
+  private async createWithTrackingToken(data: Partial<Ticket>): Promise<Ticket> {
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await this.tickets.create({ ...data, trackingToken: randomBytes(32).toString('base64url') });
+      } catch (error) {
+        const duplicate = (error as any)?.code === 'ER_DUP_ENTRY' || (error as any)?.errno === 1062;
+        if (!duplicate || attempt >= 4) throw error;
+      }
+    }
   }
 }

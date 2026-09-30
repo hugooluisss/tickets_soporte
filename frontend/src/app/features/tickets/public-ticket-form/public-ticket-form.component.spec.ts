@@ -16,7 +16,7 @@ describe('PublicTicketFormComponent', () => {
   beforeEach(async () => {
     TestBed.resetTestingModule();
     localStorage.clear();
-    const publicApi = { getProject: vi.fn(() => of({ id: 'project-1', name: 'Website' })), submit: vi.fn(() => of({ id: 'ticket-1' })) };
+    const publicApi = { getProject: vi.fn(() => of({ id: 'project-1', name: 'Website' })), submit: vi.fn(() => of({ trackingToken: 'opaque-token' })) };
     await TestBed.configureTestingModule({
       imports: [PublicTicketFormComponent],
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([{ path: 'public/projects/:projectId/new-ticket', component: PublicTicketFormComponent }]), { provide: PublicTicketApiService, useValue: publicApi }],
@@ -39,6 +39,7 @@ describe('PublicTicketFormComponent', () => {
     expect(localStorage.getItem('ticket-support.access-token')).toBeNull();
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('Request submitted');
+    expect(fixture.nativeElement.textContent).toContain('/public/tickets/opaque-token');
   });
 
   it('validates required fields and email before submitting', () => {

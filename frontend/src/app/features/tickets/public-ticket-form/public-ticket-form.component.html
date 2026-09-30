@@ -4,7 +4,7 @@
   } @else if (loadError()) {
     <section class="rounded-lg border border-danger/30 bg-white p-6" role="alert"><h1 class="text-2xl font-bold">{{ 'publicTicket.unavailableTitle' | translate }}</h1><p class="mt-2 text-slate-700">{{ 'publicTicket.projectLoadError' | translate }}</p></section>
   } @else if (submitted()) {
-    <section class="rounded-lg border border-emerald-200 bg-white p-6" role="status"><h1 class="text-2xl font-bold">{{ 'publicTicket.successTitle' | translate }}</h1><p class="mt-2 text-slate-700">{{ 'publicTicket.successMessage' | translate }}</p></section>
+    <section class="rounded-lg border border-emerald-200 bg-white p-6" role="status"><h1 class="text-2xl font-bold">{{ 'publicTicket.successTitle' | translate }}</h1><p class="mt-2 text-slate-700">{{ 'publicTicket.successMessage' | translate }}</p><h2 class="mt-5 font-semibold">{{ 'ticket.trackingLink' | translate }}</h2><a class="break-all text-brand underline" [href]="trackingUrl()">{{trackingUrl()}}</a>@if(qrCode()){<img class="mt-4 h-56 w-56" [src]="qrCode()" [alt]="'ticket.trackingQr' | translate" />}</section>
   } @else {
     <h1 class="mb-2 text-2xl font-bold">{{ 'publicTicket.title' | translate }}</h1>
     <p class="mb-5 text-slate-700">{{ 'publicTicket.projectLabel' | translate }}: <strong>{{ project()?.name }}</strong></p>

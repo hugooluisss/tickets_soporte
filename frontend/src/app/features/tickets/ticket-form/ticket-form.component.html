@@ -12,6 +12,7 @@
       <app-form-field id="ticket-assignee" [label]="'ticket.assignee' | translate" kind="select" [control]="form.controls.assignedToId"><option value="">{{ 'ticket.unassigned' | translate }}</option>@for(u of users();track u.id){<option [value]="u.id">{{u.firstName}} {{u.lastName}} ({{u.email}})</option>}</app-form-field>
     </div>
     @if(ticket(); as currentTicket){
+      <section class="rounded-md border border-slate-200 bg-slate-50 p-4"><h2 class="font-semibold">{{ 'ticket.trackingLink' | translate }}</h2><div class="mt-2 flex flex-wrap items-center gap-3"><a class="break-all text-brand underline" [href]="trackingUrl(currentTicket)">{{trackingUrl(currentTicket)}}</a><button type="button" class="rounded border px-3 py-1" (click)="copyTrackingLink()">{{ (copied() ? 'ticket.linkCopied' : 'ticket.copyLink') | translate }}</button></div></section>
       @if(!currentTicket.createdBy){
         <section class="rounded-md border border-slate-200 bg-slate-50 p-4" aria-labelledby="reported-by-heading">
           <h2 id="reported-by-heading" class="mb-3 text-sm font-semibold">{{ 'ticket.reportedBy' | translate }}</h2>

@@ -9,7 +9,7 @@ import { TicketsService } from '../src/tickets/tickets.service';
 import { PublicTicketsController } from '../src/public-tickets/public-tickets.controller';
 
 const projects: any = { findById: jest.fn() };
-const tickets: any = { createPublic: jest.fn() };
+const tickets: any = { createPublic: jest.fn(), findPublicByTrackingToken: jest.fn() };
 @Module({
   imports: [ThrottlerModule.forRoot([{ name: 'default', ttl: 60_000, limit: 5, getTracker: async (req: any) => req.headers['x-forwarded-for'] ?? req.ip }])],
   controllers: [PublicTicketsController],
@@ -50,6 +50,16 @@ describe('Public ticket API (e2e)', () => {
     await request(app.getHttpServer()).post('/api/public/projects/p1/tickets').set('x-forwarded-for', `10.0.3.${testRequest}`).send({ reporterEmail: 'client@example.com', title: 'Issue', kind: 'bug' }).expect(400);
     await request(app.getHttpServer()).post('/api/public/projects/p1/tickets').set('x-forwarded-for', `10.0.4.${testRequest}`).send({ reporterName: 'Client', reporterEmail: 'bad-email', title: 'Issue', kind: 'bug' }).expect(400);
     await request(app.getHttpServer()).post('/api/public/projects/p1/tickets').set('x-forwarded-for', `10.0.5.${testRequest}`).send({ reporterName: 'Client', reporterEmail: 'client@example.com', title: '', kind: 'bug' }).expect(400);
+  });
+
+  it('returns only the public tracking DTO and reports unknown tokens as not found', async () => {
+    tickets.findPublicByTrackingToken.mockResolvedValue({ title: 'Issue', status: 'pending', createdAt: '2026-01-01T00:00:00.000Z', kind: 'bug', description: 'Safe details' });
+    await request(app.getHttpServer()).get('/api/public/tickets/opaque-token').set('x-forwarded-for', `10.0.7.${testRequest}`).expect(200).expect(({ body }) => {
+      expect(body).toEqual({ title: 'Issue', status: 'pending', createdAt: '2026-01-01T00:00:00.000Z', kind: 'bug', description: 'Safe details' });
+      for (const field of ['id', 'reporterEmail', 'assignedTo', 'assignedToId', 'category', 'categoryId', 'comments']) expect(body).not.toHaveProperty(field);
+    });
+    tickets.findPublicByTrackingToken.mockRejectedValueOnce(new (require('@nestjs/common').NotFoundException)('Ticket not found'));
+    await request(app.getHttpServer()).get('/api/public/tickets/unknown-token').set('x-forwarded-for', `10.0.8.${testRequest}`).expect(404);
   });
 
   it('accepts a public ticket without kind and lets the service apply the default', async () => {

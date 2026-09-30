@@ -9,6 +9,7 @@ export class TicketsRepository {
   constructor(@InjectRepository(Ticket) private readonly repository: Repository<Ticket>) {}
   findAll(filter: TicketFilter = {}): Promise<Ticket[]> { return this.filtered(filter).orderBy('ticket.createdAt', 'DESC').getMany(); }
   findById(id: string): Promise<Ticket | null> { return this.repository.findOne({ where: { id }, relations: { project: true, category: true, createdBy: true, assignedTo: true } }); }
+  findByTrackingToken(trackingToken: string): Promise<Ticket | null> { return this.repository.findOne({ where: { trackingToken } }); }
   create(data: Partial<Ticket>): Promise<Ticket> { return this.repository.save(this.repository.create(data)); }
   async update(id: string, data: Partial<Ticket>): Promise<Ticket | null> { await this.repository.update(id, data); return this.findById(id); }
   async delete(id: string): Promise<boolean> { return (await this.repository.delete(id)).affected! > 0; }

@@ -5,7 +5,7 @@ import { TicketPriority } from './ticket-priority.enum';
 import { TicketStatus } from './ticket-status.enum';
 
 describe('TicketsService', () => {
-  const tickets: any = { findAll: jest.fn(), findById: jest.fn(), create: jest.fn(), update: jest.fn(), delete: jest.fn(), summary: jest.fn(), aggregates: jest.fn() };
+  const tickets: any = { findAll: jest.fn(), findById: jest.fn(), findByTrackingToken: jest.fn(), create: jest.fn(), update: jest.fn(), delete: jest.fn(), summary: jest.fn(), aggregates: jest.fn() };
   const users: any = { findById: jest.fn() }; const projects: any = { findById: jest.fn() }; const categories: any = { findById: jest.fn() };
   let service: TicketsService;
   const webhooks: any = { notify: jest.fn() }; const emails: any = { notify: jest.fn() };
@@ -14,6 +14,7 @@ describe('TicketsService', () => {
     tickets.create.mockImplementation(async (row: any) => row);
     const result = await service.create({ title: 'Issue' }, 'u1');
     expect(result).toMatchObject({ title: 'Issue', createdById: 'u1', kind: TicketKind.TICKET, priority: TicketPriority.MEDIUM, status: TicketStatus.PENDING, projectId: null, categoryId: null });
+    expect(result.trackingToken).toMatch(/^[A-Za-z0-9_-]{43}$/);
   });
   it('rejects a missing title and invalid enum values', async () => {
     await expect(service.create({}, 'u1')).rejects.toBeInstanceOf(BadRequestException);
@@ -27,6 +28,19 @@ describe('TicketsService', () => {
     const created = await service.createPublic('p1', { reporterName: ' Client ', reporterEmail: 'client@example.com', reporterLocation: ' City ', title: ' Issue ', kind: TicketKind.BUG });
     expect(created).toMatchObject({ createdById: null, reporterName: 'Client', reporterEmail: 'client@example.com', reporterLocation: 'City', title: 'Issue', kind: TicketKind.BUG, status: TicketStatus.PENDING, priority: TicketPriority.MEDIUM, assignedToId: null, categoryId: null });
     expect(webhooks.notify).toHaveBeenCalledWith('https://example.com/hook', expect.objectContaining({ ticketId: 't1', projectId: 'p1', projectName: 'Alpha', reporterName: 'Client', reporterEmail: 'client@example.com' }));
+    expect(created.trackingToken).toMatch(/^[A-Za-z0-9_-]{43}$/);
+    expect(created.trackingToken).not.toBe((await service.createPublic('p1', { reporterName: 'C', reporterEmail: 'c@example.com', title: 'Another' })).trackingToken);
+  });
+  it('retries a tracking token collision and returns only public fields', async () => {
+    tickets.create.mockRejectedValueOnce({ code: 'ER_DUP_ENTRY' }).mockImplementationOnce(async (row: any) => row);
+    const created = await service.create({ title: 'Issue' }, 'u1');
+    expect(tickets.create).toHaveBeenCalledTimes(2);
+    tickets.findByTrackingToken.mockResolvedValue({ ...created, id: 'secret', reporterEmail: 'private@example.com', assignedToId: 'u2', categoryId: 'c1' });
+    await expect(service.findPublicByTrackingToken(created.trackingToken)).resolves.toEqual({ title: 'Issue', status: TicketStatus.PENDING, createdAt: undefined, kind: TicketKind.TICKET });
+  });
+  it('returns not found for an unknown tracking token', async () => {
+    tickets.findByTrackingToken.mockResolvedValue(null);
+    await expect(service.findPublicByTrackingToken('unknown')).rejects.toBeInstanceOf(NotFoundException);
   });
   it('defaults the kind for public ticket creation when it is omitted', async () => {
     projects.findById.mockResolvedValue({ id: 'p1', name: 'Alpha' });

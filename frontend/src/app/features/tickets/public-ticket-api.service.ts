@@ -12,11 +12,12 @@ export type PublicTicketSubmission = {
   description?: string;
   kind?: 'ticket' | 'bug' | 'suggestion' | 'feature';
 };
+export interface PublicTicketReceipt { trackingToken: string; }
 
 @Injectable({ providedIn: 'root' })
 export class PublicTicketApiService {
   private readonly http = inject(HttpClient);
   private readonly url = `${environment.apiBaseUrl}/public/projects`;
   getProject(projectId: string): Observable<PublicProject> { return this.http.get<PublicProject>(`${this.url}/${encodeURIComponent(projectId)}`); }
-  submit(projectId: string, input: PublicTicketSubmission): Observable<unknown> { return this.http.post(`${this.url}/${encodeURIComponent(projectId)}/tickets`, input); }
+  submit(projectId: string, input: PublicTicketSubmission): Observable<PublicTicketReceipt> { return this.http.post<PublicTicketReceipt>(`${this.url}/${encodeURIComponent(projectId)}/tickets`, input); }
 }

@@ -10,6 +10,7 @@ import { TicketStatus } from './ticket-status.enum';
 export class Ticket {
   @PrimaryGeneratedColumn('uuid') id!: string;
   @Column({ type: 'varchar', length: 255 }) title!: string;
+  @Column({ name: 'tracking_token', type: 'varchar', length: 43, unique: true }) trackingToken!: string;
   @Column({ type: 'text', nullable: true }) description!: string | null;
   @Column({ type: 'enum', enum: TicketKind, default: TicketKind.TICKET }) kind!: TicketKind;
   @Column({ type: 'enum', enum: TicketPriority, default: TicketPriority.MEDIUM }) priority!: TicketPriority;

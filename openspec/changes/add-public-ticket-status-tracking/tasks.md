@@ -3,11 +3,11 @@
 ## 1. Ticket tracking tokens
 
 - [ ] 1.1 Add a unique tracking token column and migration that backfills existing tickets with random opaque tokens before enforcing non-null uniqueness; verify migration up/down against a populated database.
-- [ ] 1.2 Generate a cryptographically random token for both internal and public ticket creation using Node crypto; verify created tickets always persist distinct tokens and collision handling retries.
+- [x] 1.2 Generate a cryptographically random token for both internal and public ticket creation using Node crypto; verify created tickets always persist distinct tokens and collision handling retries.
 
 ## 2. Public tracking API and page
 
-- [ ] 2.1 Add an unauthenticated token lookup endpoint returning only the allowlisted public fields and not-found for unknown tokens; verify response shape excludes internal id, reporter email, assignment, category, and comments.
+- [x] 2.1 Add an unauthenticated token lookup endpoint returning only the allowlisted public fields and not-found for unknown tokens; verify response shape excludes internal id, reporter email, assignment, category, and comments.
 - [ ] 2.2 Add a read-only public tracking route and page for title, status, creation date, and permitted safe fields; verify valid and invalid links while logged out and confirm no mutation controls exist.
 
 ## 3. Tracking link and QR exposure
