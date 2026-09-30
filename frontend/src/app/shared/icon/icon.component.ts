@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 
-export type IconName = 'tickets' | 'projects' | 'categories' | 'dashboard' | 'reports' | 'profile' | 'administration' | 'logout' | 'total-tickets' | 'client-replies' | 'staff-replies' | 'no-reply';
+export type IconName = 'tickets' | 'projects' | 'categories' | 'dashboard' | 'reports' | 'profile' | 'administration' | 'logout' | 'total-tickets' | 'client-replies' | 'staff-replies' | 'no-reply' | 'edit' | 'delete';
 
 @Component({ selector: 'app-icon', standalone: true, template: `
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="icon">
@@ -17,6 +17,8 @@ export type IconName = 'tickets' | 'projects' | 'categories' | 'dashboard' | 're
     @case ('client-replies') { <path d="M4 5h16v12H9l-5 4z"/><path d="M8 9h8M8 13h5"/> }
     @case ('staff-replies') { <path d="M20 5H4v12h11l5 4z"/><path d="M8 9h8M11 13h5"/> }
     @case ('no-reply') { <circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 0 1 5.5 1.5c0 2-2.5 2-2.5 4M12 18h.01"/> }
+    @case ('edit') { <path d="m16 4 4 4L9 19l-5 1 1-5z"/><path d="m14 6 4 4"/> }
+    @case ('delete') { <path d="M4 7h16M10 11v6M14 11v6M5 7l1 14h12l1-14M9 7V4h6v3"/> }
   }
 </svg>`, styles: [`.icon{display:block;width:1.25rem;height:1.25rem}`] })
 export class IconComponent { readonly name = input.required<IconName>(); }

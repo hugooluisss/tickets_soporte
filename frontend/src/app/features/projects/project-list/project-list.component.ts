@@ -1,10 +1,11 @@
 import { TranslationService } from '../../../core/i18n/translation.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { Component, inject, signal } from '@angular/core';
+import { IconComponent } from '../../../shared/icon/icon.component';
 import { RouterLink } from '@angular/router';
 import { Project } from '../../models';
 import { ProjectsService } from '../projects.service';
-@Component({ selector: 'app-project-list', imports: [RouterLink, TranslatePipe], templateUrl: './project-list.component.html', styleUrl: './project-list.component.css' })
+@Component({ selector: 'app-project-list', imports: [RouterLink, TranslatePipe, IconComponent], templateUrl: './project-list.component.html', styleUrl: './project-list.component.css' })
 export class ProjectList {private readonly translations=inject(TranslationService);
   private readonly projects = inject(ProjectsService); readonly rows = signal<Project[]>([]); readonly error = signal('');
   constructor() { this.load(); }

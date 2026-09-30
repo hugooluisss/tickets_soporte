@@ -1,11 +1,12 @@
 import { TranslationService } from '../../../core/i18n/translation.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { Component, inject, signal } from '@angular/core';
+import { IconComponent } from '../../../shared/icon/icon.component';
 import { RouterLink } from '@angular/router';
 import { User } from '../../models';
 import { UsersService } from '../users.service';
 
-@Component({ selector: 'app-user-list', imports: [RouterLink, TranslatePipe], templateUrl: './user-list.component.html', styleUrl: './user-list.component.css' })
+@Component({ selector: 'app-user-list', imports: [RouterLink, TranslatePipe, IconComponent], templateUrl: './user-list.component.html', styleUrl: './user-list.component.css' })
 export class UserList {
   private readonly translations = inject(TranslationService);
   private readonly users = inject(UsersService);
