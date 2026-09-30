@@ -53,6 +53,10 @@ export class TicketForm {
     if (this.id) this.api.listNotes(this.id).subscribe({ next: notes => this.notes.set(notes), error: () => this.noteError.set(this.translations.t('ticket.notesLoadError')) });
   }
 
+  submitNoteShortcut(event: KeyboardEvent) {
+    if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) { event.preventDefault(); this.addNote(); }
+  }
+
   addNote() {
     if (!this.id) return;
     const content = this.noteForm.controls.content.value.trim();

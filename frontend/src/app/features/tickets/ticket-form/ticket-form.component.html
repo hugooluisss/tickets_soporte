@@ -33,7 +33,7 @@
       @if(noteError()){<p class="mb-4 rounded-md bg-danger-bg p-3 text-danger" role="alert">{{noteError()}}</p>}
       <form class="mb-6 grid gap-3" [formGroup]="noteForm" (ngSubmit)="addNote()" novalidate>
         <label for="ticket-note-content" class="font-medium">{{ 'ticket.addNote' | translate }}</label>
-        <textarea id="ticket-note-content" rows="3" formControlName="content" class="rounded-md border border-slate-300 p-3"></textarea>
+        <textarea id="ticket-note-content" rows="3" formControlName="content" class="rounded-md border border-slate-300 p-3" (keydown)="submitNoteShortcut($event)"></textarea>
         @if(noteForm.controls.content.touched && noteForm.controls.content.invalid){<p class="text-sm text-danger" role="alert">{{ 'ticket.noteRequired' | translate }}</p>}
         <div><button class="rounded-md bg-brand px-4 py-2 font-semibold text-white disabled:opacity-65" [disabled]="noteSaving()">{{ (noteSaving() ? 'ticket.noteSaving' : 'ticket.addNote') | translate }}</button></div>
       </form>
