@@ -6,8 +6,11 @@ import { PublicTicketTrackingApiService } from '../public-ticket-tracking-api.se
 import { PublicTicketTrackingComponent } from './public-ticket-tracking.component';
 
 describe('PublicTicketTrackingComponent', () => {
+  afterEach(() => localStorage.removeItem('lang'));
+
   it('shows public fields for a valid token without mutation controls', async () => {
     TestBed.resetTestingModule();
+    localStorage.setItem('lang', 'en');
     await TestBed.configureTestingModule({
       providers: [provideRouter([{ path: 'public/tickets/:token', component: PublicTicketTrackingComponent }]), {
         provide: PublicTicketTrackingApiService,
@@ -24,6 +27,7 @@ describe('PublicTicketTrackingComponent', () => {
 
   it('shows a not-found state for an unknown token', async () => {
     TestBed.resetTestingModule();
+    localStorage.setItem('lang', 'en');
     await TestBed.configureTestingModule({
       providers: [provideRouter([{ path: 'public/tickets/:token', component: PublicTicketTrackingComponent }]), {
         provide: PublicTicketTrackingApiService,
