@@ -1,5 +1,39 @@
 import { TranslationService } from '../../../core/i18n/translation.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { Component, inject, signal } from '@angular/core';
-import { IconComponent } from '../../../shared/icon/icon.component'; import { RouterLink } from '@angular/router'; import { Category } from '../../models'; import { CategoriesService } from '../categories.service';
-@Component({selector:'app-category-list',imports:[RouterLink,TranslatePipe,IconComponent],templateUrl:'./category-list.component.html',styleUrl:'./category-list.component.css'}) export class CategoryList {private readonly translations=inject(TranslationService); private readonly api=inject(CategoriesService); readonly rows=signal<Category[]>([]); readonly error=signal(''); constructor(){this.load()} load(){this.api.list().subscribe({next:v=>this.rows.set(v),error:()=>this.error.set(this.translations.t('category.loadError'))})} remove(row:Category){if(!globalThis.confirm(`Delete category “${row.name}”?`))return;this.api.delete(row.id).subscribe({next:()=>this.load(),error:()=>this.error.set(this.translations.t('category.deleteError'))})} }
+import { IconComponent } from '../../../shared/icon/icon.component';
+import { RouterLink } from '@angular/router';
+import { Category } from '../../models';
+import { CategoriesService } from '../categories.service';
+@Component({
+  selector: 'app-category-list',
+  imports: [RouterLink, TranslatePipe, IconComponent],
+  templateUrl: './category-list.component.html',
+  styleUrl: './category-list.component.css',
+})
+export class CategoryList {
+  private readonly translations = inject(TranslationService);
+  private readonly api = inject(CategoriesService);
+  readonly rows = signal<Category[]>([]);
+  readonly error = signal('');
+  constructor() {
+    this.load();
+  }
+  load() {
+    this.api
+      .list()
+      .subscribe({
+        next: (v) => this.rows.set(v),
+        error: () => this.error.set(this.translations.t('category.loadError')),
+      });
+  }
+  remove(row: Category) {
+    if (!globalThis.confirm(`Delete category “${row.name}”?`)) return;
+    this.api
+      .delete(row.id)
+      .subscribe({
+        next: () => this.load(),
+        error: () => this.error.set(this.translations.t('category.deleteError')),
+      });
+  }
+}

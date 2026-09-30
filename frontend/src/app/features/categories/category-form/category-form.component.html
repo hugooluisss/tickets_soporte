@@ -1,8 +1,28 @@
 <section class="mx-auto my-8 max-w-xl px-4">
   <h1 class="mb-4 text-2xl font-bold">{{ (id ? 'category.edit' : 'category.new') | translate }}</h1>
-  @if(error()){<p class="mb-4 rounded-md bg-danger-bg p-3 text-danger" role="alert">{{error()}}</p>}
-  <form class="grid gap-4 rounded-lg border border-slate-200 bg-white p-6" [formGroup]="form" (ngSubmit)="save()" novalidate>
-    <app-form-field id="category-name" [label]="'common.name' | translate" [control]="form.controls.name" [errorMessage]="'category.nameError' | translate" />
-    <div class="mt-2 flex justify-between"><a class="text-brand underline" routerLink="/categories">{{ 'common.cancel' | translate }}</a><button class="rounded-md bg-brand px-4 py-2 font-semibold text-white disabled:opacity-65" [disabled]="saving()">{{ 'category.save' | translate }}</button></div>
+  @if (error()) {
+    <p class="mb-4 rounded-md bg-danger-bg p-3 text-danger" role="alert">{{ error() }}</p>
+  }
+  <form
+    class="grid gap-4 rounded-lg border border-slate-200 bg-white p-6"
+    [formGroup]="form"
+    (ngSubmit)="save()"
+    novalidate
+  >
+    <app-form-field
+      id="category-name"
+      [label]="'common.name' | translate"
+      [control]="form.controls.name"
+      [errorMessage]="'category.nameError' | translate"
+    />
+    <div class="mt-2 flex justify-between">
+      <a class="text-brand underline" routerLink="/categories">{{ 'common.cancel' | translate }}</a
+      ><button
+        class="rounded-md bg-brand px-4 py-2 font-semibold text-white disabled:opacity-65"
+        [disabled]="saving()"
+      >
+        {{ 'category.save' | translate }}
+      </button>
+    </div>
   </form>
 </section>

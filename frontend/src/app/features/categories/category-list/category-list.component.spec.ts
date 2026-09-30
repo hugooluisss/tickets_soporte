@@ -11,7 +11,19 @@ describe('CategoryList', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CategoryList],
-      providers: [provideRouter([]), { provide: CategoriesService, useValue: { list: () => of([]), get: () => of({ id: '', name: '' }), create: () => of({ id: '', name: '' }), update: () => of({ id: '', name: '' }), delete: () => of({ deleted: true }) } }],
+      providers: [
+        provideRouter([]),
+        {
+          provide: CategoriesService,
+          useValue: {
+            list: () => of([]),
+            get: () => of({ id: '', name: '' }),
+            create: () => of({ id: '', name: '' }),
+            update: () => of({ id: '', name: '' }),
+            delete: () => of({ deleted: true }),
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CategoryList);

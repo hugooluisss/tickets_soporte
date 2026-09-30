@@ -1,1 +1,47 @@
-<section class="page"><header><div><h1>{{ 'nav.categories' | translate }}</h1><p>{{ 'category.classify' | translate }}</p></div><a class="button" routerLink="/categories/new">{{ 'category.newAction' | translate }}</a></header>@if(error()){<p class="error" role="alert">{{error()}}</p>}<table><thead><tr><th>{{ 'common.name' | translate }}</th><th>{{ 'common.actions' | translate }}</th></tr></thead><tbody>@for(row of rows();track row.id){<tr><td>{{row.name}}</td><td class="row-actions"><a [routerLink]="['/categories',row.id,'edit']" [attr.aria-label]="'common.edit' | translate" [attr.title]="'common.edit' | translate"><app-icon name="edit" /></a><button class="row-action" type="button" (click)="remove(row)" [attr.aria-label]="'common.delete' | translate" [attr.title]="'common.delete' | translate"><app-icon name="delete" /></button></td></tr>}@empty{<tr><td colspan="2">{{ 'category.none' | translate }}</td></tr>}</tbody></table></section>
+<section class="page">
+  <header>
+    <div>
+      <h1>{{ 'nav.categories' | translate }}</h1>
+      <p>{{ 'category.classify' | translate }}</p>
+    </div>
+    <a class="button" routerLink="/categories/new">{{ 'category.newAction' | translate }}</a>
+  </header>
+  @if (error()) {
+    <p class="error" role="alert">{{ error() }}</p>
+  }
+  <table>
+    <thead>
+      <tr>
+        <th>{{ 'common.name' | translate }}</th>
+        <th>{{ 'common.actions' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of rows(); track row.id) {
+        <tr>
+          <td>{{ row.name }}</td>
+          <td class="row-actions">
+            <a
+              [routerLink]="['/categories', row.id, 'edit']"
+              [attr.aria-label]="'common.edit' | translate"
+              [attr.title]="'common.edit' | translate"
+              ><app-icon name="edit" /></a
+            ><button
+              class="row-action"
+              type="button"
+              (click)="remove(row)"
+              [attr.aria-label]="'common.delete' | translate"
+              [attr.title]="'common.delete' | translate"
+            >
+              <app-icon name="delete" />
+            </button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="2">{{ 'category.none' | translate }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</section>
