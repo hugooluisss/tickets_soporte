@@ -13,6 +13,7 @@
       <app-form-field id="public-reporter-name" [label]="'publicTicket.reporterName' | translate" [control]="form.controls.reporterName" [errorMessage]="validationMessage('reporterName')" />
       <app-form-field id="public-reporter-email" [label]="'publicTicket.reporterEmail' | translate" type="email" [control]="form.controls.reporterEmail" [errorMessage]="validationMessage('reporterEmail')" />
       <app-form-field id="public-reporter-location" [label]="'publicTicket.reporterLocation' | translate" [control]="form.controls.reporterLocation" [errorMessage]="'publicTicket.fieldTooLong' | translate" />
+      <label class="flex items-center gap-2 text-sm text-slate-700"><input type="checkbox" formControlName="reporterEmailNotifications" /> {{ 'publicTicket.emailNotifications' | translate }}</label>
       <app-form-field id="public-ticket-title" [label]="'ticket.title' | translate" [control]="form.controls.title" [errorMessage]="validationMessage('title')" />
       <app-form-field id="public-ticket-description" [label]="'common.description' | translate" kind="textarea" [rows]="5" [control]="form.controls.description" />
       <app-form-field id="public-ticket-kind" [label]="'common.kind' | translate" kind="select" [control]="form.controls.kind">@for (kind of kinds; track kind) { <option [value]="kind">{{ ('value.' + kind) | translate }}</option> }</app-form-field>

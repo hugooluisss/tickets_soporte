@@ -8,6 +8,7 @@ export type PublicTicketSubmission = {
   reporterName: string;
   reporterEmail: string;
   reporterLocation?: string;
+  reporterEmailNotifications?: boolean;
   title: string;
   description?: string;
   kind?: 'ticket' | 'bug' | 'suggestion' | 'feature';

@@ -33,9 +33,9 @@ describe('PublicTicketFormComponent', () => {
   it('loads the public project and submits the form while logged out', () => {
     expect(fixture.nativeElement.textContent).toContain('Website');
     const component = fixture.componentInstance;
-    component.form.setValue({ reporterName: 'Ada', reporterEmail: 'ada@example.com', reporterLocation: 'London', title: 'Broken page', description: 'Details', kind: 'bug' });
+    component.form.setValue({ reporterName: 'Ada', reporterEmail: 'ada@example.com', reporterLocation: 'London', reporterEmailNotifications: false, title: 'Broken page', description: 'Details', kind: 'bug' });
     component.submit();
-    expect(TestBed.inject(PublicTicketApiService).submit).toHaveBeenCalledWith('project-1', { reporterName: 'Ada', reporterEmail: 'ada@example.com', reporterLocation: 'London', title: 'Broken page', description: 'Details', kind: 'bug' });
+    expect(TestBed.inject(PublicTicketApiService).submit).toHaveBeenCalledWith('project-1', { reporterName: 'Ada', reporterEmail: 'ada@example.com', reporterEmailNotifications: false, reporterLocation: 'London', title: 'Broken page', description: 'Details', kind: 'bug' });
     expect(localStorage.getItem('ticket-support.access-token')).toBeNull();
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('Request submitted');
@@ -52,7 +52,7 @@ describe('PublicTicketFormComponent', () => {
 
   it('keeps the form visible and shows an error if submission fails', () => {
     const component = fixture.componentInstance;
-    component.form.setValue({ reporterName: 'Ada', reporterEmail: 'ada@example.com', reporterLocation: '', title: 'Broken page', description: '', kind: 'ticket' });
+    component.form.setValue({ reporterName: 'Ada', reporterEmail: 'ada@example.com', reporterLocation: '', reporterEmailNotifications: false, title: 'Broken page', description: '', kind: 'ticket' });
     vi.mocked(TestBed.inject(PublicTicketApiService).submit).mockReturnValue(throwError(() => new Error('Bad Request')));
     component.submit();
     fixture.detectChanges();

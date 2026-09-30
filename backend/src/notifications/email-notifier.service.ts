@@ -20,7 +20,7 @@ export class EmailNotifierService {
   }
 
   notify(ticket: Ticket): void {
-    if (!ticket.reporterEmail) return;
+    if (!ticket.reporterEmail || !ticket.reporterEmailNotifications) return;
     const status = ticket.status.replace('_', ' ');
     void this.transporter.sendMail({
       from: this.from,

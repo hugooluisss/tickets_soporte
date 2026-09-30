@@ -24,6 +24,7 @@ export class PublicTicketFormComponent {
     reporterName: ['', [Validators.required, Validators.maxLength(150)]],
     reporterEmail: ['', [Validators.required, Validators.email, Validators.maxLength(255)]],
     reporterLocation: ['', Validators.maxLength(255)],
+    reporterEmailNotifications: [false],
     title: ['', [Validators.required, Validators.maxLength(255)]],
     description: [''],
     kind: ['ticket' as TicketKind, Validators.required],
@@ -41,7 +42,7 @@ export class PublicTicketFormComponent {
     const value = this.form.getRawValue();
     this.api.submit(this.projectId, {
       reporterName: value.reporterName.trim(), reporterEmail: value.reporterEmail.trim(),
-      reporterLocation: value.reporterLocation.trim() || undefined, title: value.title.trim(),
+      reporterLocation: value.reporterLocation.trim() || undefined, title: value.title.trim(), reporterEmailNotifications: value.reporterEmailNotifications,
       description: value.description.trim() || undefined, kind: value.kind,
     }).subscribe({
       next: () => { this.submitted.set(true); this.submitting.set(false); },
