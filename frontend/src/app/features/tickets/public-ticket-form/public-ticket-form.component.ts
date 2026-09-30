@@ -6,6 +6,7 @@ import { TranslationService } from '../../../core/i18n/translation.service';
 import { FormFieldComponent } from '../../../shared/form-field/form-field.component';
 import { PublicProject, PublicTicketApiService } from '../public-ticket-api.service';
 import { TicketKind } from '../../models';
+import QRCode from 'qrcode';
 
 @Component({ selector: 'app-public-ticket-form', standalone: true, imports: [ReactiveFormsModule, FormFieldComponent, TranslatePipe], templateUrl: './public-ticket-form.component.html' })
 export class PublicTicketFormComponent {
@@ -19,6 +20,8 @@ export class PublicTicketFormComponent {
   readonly submitError = signal(false);
   readonly submitting = signal(false);
   readonly submitted = signal(false);
+  readonly trackingUrl = signal('');
+  readonly qrCode = signal('');
   readonly kinds = ['ticket', 'bug', 'suggestion', 'feature'] as const;
   readonly form = this.fb.nonNullable.group({
     reporterName: ['', [Validators.required, Validators.maxLength(150)]],
@@ -44,7 +47,12 @@ export class PublicTicketFormComponent {
       reporterLocation: value.reporterLocation.trim() || undefined, title: value.title.trim(),
       description: value.description.trim() || undefined, kind: value.kind,
     }).subscribe({
-      next: () => { this.submitted.set(true); this.submitting.set(false); },
+      next: receipt => {
+        const url = new URL(`public/tickets/${encodeURIComponent(receipt.trackingToken)}`, document.baseURI).toString();
+        this.trackingUrl.set(url);
+        QRCode.toDataURL(url, { width: 220, margin: 1 }).then(qr => this.qrCode.set(qr));
+        this.submitted.set(true); this.submitting.set(false);
+      },
       error: () => { this.submitError.set(true); this.submitting.set(false); },
     });
   }

@@ -4,7 +4,7 @@ export interface User { id: string; email: string; firstName: string; lastName: 
 export type TicketKind = 'ticket' | 'bug' | 'suggestion' | 'feature';
 export type TicketPriority = 'high' | 'medium' | 'low';
 export type TicketStatus = 'pending' | 'in_progress' | 'done' | 'cancelled';
-export interface Ticket { id: string; title: string; description: string | null; kind: TicketKind; priority: TicketPriority; status: TicketStatus; projectId: string | null; categoryId: string | null; assignedToId: string | null; project?: Project | null; category?: Category | null; createdBy?: User | null; reporterName?: string | null; reporterEmail?: string | null; reporterLocation?: string | null; assignedTo?: User | null; createdAt: string; updatedAt: string; }
+export interface Ticket { id: string; trackingToken: string; title: string; description: string | null; kind: TicketKind; priority: TicketPriority; status: TicketStatus; projectId: string | null; categoryId: string | null; assignedToId: string | null; project?: Project | null; category?: Category | null; createdBy?: User | null; reporterName?: string | null; reporterEmail?: string | null; reporterLocation?: string | null; assignedTo?: User | null; createdAt: string; updatedAt: string; }
 export interface TicketFilters { q?: string; projectId?: string; categoryId?: string; priority?: TicketPriority; status?: TicketStatus; kind?: TicketKind; dateFrom?: string; dateTo?: string; }
 export interface CountRow { key?: string; id?: string | null; name?: string; count: number; }
 export interface DashboardSummary {
