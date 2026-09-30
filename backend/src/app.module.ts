@@ -11,6 +11,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { ReportsModule } from './reports/reports.module';
 import { TicketCommentsModule } from './ticket-comments/ticket-comments.module';
 import { PublicTicketsModule } from './public-tickets/public-tickets.module';
+import { TicketNotesModule } from './ticket-notes/ticket-notes.module';
 
-@Module({ imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, UsersModule, AuthModule, ProfileModule, ProjectsModule, CategoriesModule, TicketsModule, TicketCommentsModule, DashboardModule, ReportsModule, PublicTicketsModule] })
+@Module({ imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, UsersModule, AuthModule, ProfileModule, ProjectsModule, CategoriesModule, TicketsModule, TicketCommentsModule, TicketNotesModule, DashboardModule, ReportsModule, PublicTicketsModule] })
 export class AppModule {}

@@ -17,4 +17,7 @@ export class TicketsService {
   create(input: Partial<Ticket> & Pick<Ticket, 'title'>) { return this.api.create(input); }
   update(id: string, input: Partial<Ticket>) { return this.api.update(id, input); }
   delete(id: string) { return this.api.delete(id); }
+  listNotes(ticketId: string) { return this.api.listNotes(ticketId); }
+  createNote(ticketId: string, content: string) { return this.api.createNote(ticketId, content); }
+  deleteNote(ticketId: string, noteId: string) { return this.api.deleteNote(ticketId, noteId); }
 }
