@@ -1,4 +1,4 @@
-# Deployment
+# Development deployment
 
 The backend and frontend run as Docker containers, connecting to this host's existing local MySQL instance (`dev_tickets` database — no MySQL container). Public access is through this host's shared Caddy instance under path prefixes.
 
@@ -7,21 +7,23 @@ The backend and frontend run as Docker containers, connecting to this host's exi
 - The `dev_tickets` MySQL database and `dev_tickets_app` user already exist locally, granted from both `localhost` and the Docker bridge subnet (`172.19.0.0/16` on this host — check `docker network inspect tickets_soporte_default` if it ever changes).
 - A root-level `.env` file exists (copy `.env.example` and fill in real values). It is git-ignored and must never be committed.
 
-## Start / stop / rebuild
+## Start / stop
 
 ```bash
-docker compose up -d --build   # build and start both containers
-docker compose ps -a           # check status
-docker compose logs backend    # check backend logs (e.g. DB connection issues)
-docker compose down            # stop both containers
+docker compose -f docker-compose.dev.yml up -d   # start backend and frontend in watch mode
+docker compose -f docker-compose.dev.yml ps -a   # check status
+docker compose -f docker-compose.dev.yml logs backend-dev  # backend logs
+docker compose -f docker-compose.dev.yml down
 ```
+
+The backend and frontend source directories are bind-mounted into their dev containers. The backend runs `npm run start:dev`; the frontend runs its Angular dev server. Source changes are picked up automatically without rebuilding an image. The production `docker-compose.yml` remains available for built-image deployments.
 
 ## Run migrations
 
 Inside the container, use the production script (not `migration:run`, which needs dev-only `ts-node` tooling not present in the runtime image):
 
 ```bash
-docker compose exec backend npm run migration:run:prod
+docker compose -f docker-compose.dev.yml exec backend-dev npm run migration:run
 ```
 
 ## Apply a Caddy config change
