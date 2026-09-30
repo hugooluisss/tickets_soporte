@@ -1,1 +1,32 @@
-<main class="mx-auto my-8 max-w-2xl px-4"><section class="rounded-lg border border-slate-200 bg-white p-6">@if(loading()){<p role="status">{{ 'publicTracking.loading' | translate }}</p>}@else if(notFound()){<h1 class="text-2xl font-bold">{{ 'publicTracking.notFoundTitle' | translate }}</h1><p class="mt-2">{{ 'publicTracking.notFoundMessage' | translate }}</p>}@else if(ticket();as t){<h1 class="text-2xl font-bold">{{t.title}}</h1><dl class="mt-5 grid gap-4"><div><dt class="text-sm text-slate-500">{{ 'common.status' | translate }}</dt><dd>{{ ('value.' + t.status) | translate }}</dd></div><div><dt class="text-sm text-slate-500">{{ 'ticket.created' | translate }}</dt><dd>{{t.createdAt | date:'medium'}}</dd></div><div><dt class="text-sm text-slate-500">{{ 'common.kind' | translate }}</dt><dd>{{ ('value.' + t.kind) | translate }}</dd></div>@if(t.description){<div><dt class="text-sm text-slate-500">{{ 'common.description' | translate }}</dt><dd class="whitespace-pre-wrap">{{t.description}}</dd></div>}</dl>}</section></main>
+<main class="mx-auto my-8 max-w-2xl px-4">
+  <section class="rounded-lg border border-slate-200 bg-white p-6">
+    @if (loading()) {
+      <p role="status">{{ 'publicTracking.loading' | translate }}</p>
+    } @else if (notFound()) {
+      <h1 class="text-2xl font-bold">{{ 'publicTracking.notFoundTitle' | translate }}</h1>
+      <p class="mt-2">{{ 'publicTracking.notFoundMessage' | translate }}</p>
+    } @else if (ticket(); as t) {
+      <h1 class="text-2xl font-bold">{{ t.title }}</h1>
+      <dl class="mt-5 grid gap-4">
+        <div>
+          <dt class="text-sm text-slate-500">{{ 'common.status' | translate }}</dt>
+          <dd>{{ 'value.' + t.status | translate }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm text-slate-500">{{ 'ticket.created' | translate }}</dt>
+          <dd>{{ t.createdAt | date: 'medium' }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm text-slate-500">{{ 'common.kind' | translate }}</dt>
+          <dd>{{ 'value.' + t.kind | translate }}</dd>
+        </div>
+        @if (t.description) {
+          <div>
+            <dt class="text-sm text-slate-500">{{ 'common.description' | translate }}</dt>
+            <dd class="whitespace-pre-wrap">{{ t.description }}</dd>
+          </div>
+        }
+      </dl>
+    }
+  </section>
+</main>

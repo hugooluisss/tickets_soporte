@@ -1,1 +1,33 @@
-<section class="page"><h1>{{ 'profile.title' | translate }}</h1>@if(profile();as p){<dl><dt>{{ 'common.name' | translate }}</dt><dd>{{p.firstName}} {{p.lastName}}</dd><dt>{{ 'login.email' | translate }}</dt><dd>{{p.email}}</dd><dt>{{ 'profile.role' | translate }}</dt><dd>{{p.role}}</dd><dt>{{ 'common.status' | translate }}</dt><dd>{{p.isActive?('profile.active' | translate):('profile.inactive' | translate)}}</dd></dl>}<h2>{{ 'profile.changePassword' | translate }}</h2>@if(message()){<p class="success" role="status">{{message()}}</p>}@if(error()){<p class="error" role="alert">{{error()}}</p>}<form [formGroup]="form" (ngSubmit)="changePassword()"><label for="current">{{ 'profile.currentPassword' | translate }}</label><input id="current" type="password" formControlName="currentPassword"><label for="new">{{ 'profile.newPassword' | translate }}</label><input id="new" type="password" formControlName="newPassword">@if(form.controls.newPassword.touched&&form.controls.newPassword.invalid){<small>{{ 'profile.passwordHint' | translate }}</small>}<button>{{ 'profile.changePassword' | translate }}</button></form></section>
+<section class="page">
+  <h1>{{ 'profile.title' | translate }}</h1>
+  @if (profile(); as p) {
+    <dl>
+      <dt>{{ 'common.name' | translate }}</dt>
+      <dd>{{ p.firstName }} {{ p.lastName }}</dd>
+      <dt>{{ 'login.email' | translate }}</dt>
+      <dd>{{ p.email }}</dd>
+      <dt>{{ 'profile.role' | translate }}</dt>
+      <dd>{{ p.role }}</dd>
+      <dt>{{ 'common.status' | translate }}</dt>
+      <dd>{{ p.isActive ? ('profile.active' | translate) : ('profile.inactive' | translate) }}</dd>
+    </dl>
+  }
+  <h2>{{ 'profile.changePassword' | translate }}</h2>
+  @if (message()) {
+    <p class="success" role="status">{{ message() }}</p>
+  }
+  @if (error()) {
+    <p class="error" role="alert">{{ error() }}</p>
+  }
+  <form [formGroup]="form" (ngSubmit)="changePassword()">
+    <label for="current">{{ 'profile.currentPassword' | translate }}</label
+    ><input id="current" type="password" formControlName="currentPassword" /><label for="new">{{
+      'profile.newPassword' | translate
+    }}</label
+    ><input id="new" type="password" formControlName="newPassword" />
+    @if (form.controls.newPassword.touched && form.controls.newPassword.invalid) {
+      <small>{{ 'profile.passwordHint' | translate }}</small>
+    }
+    <button>{{ 'profile.changePassword' | translate }}</button>
+  </form>
+</section>

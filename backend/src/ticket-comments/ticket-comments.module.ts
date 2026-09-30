@@ -7,5 +7,10 @@ import { TicketCommentsController } from './ticket-comments.controller';
 import { TicketCommentsRepository } from './ticket-comments.repository';
 import { TicketCommentsService } from './ticket-comments.service';
 
-@Module({ imports: [TypeOrmModule.forFeature([TicketComment]), AuthModule, TicketsModule], controllers: [TicketCommentsController], providers: [TicketCommentsRepository, TicketCommentsService], exports: [TicketCommentsRepository, TicketCommentsService] })
+@Module({
+  imports: [TypeOrmModule.forFeature([TicketComment]), AuthModule, TicketsModule],
+  controllers: [TicketCommentsController],
+  providers: [TicketCommentsRepository, TicketCommentsService],
+  exports: [TicketCommentsRepository, TicketCommentsService],
+})
 export class TicketCommentsModule {}

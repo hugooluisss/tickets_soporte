@@ -7,5 +7,9 @@ import { TicketNotesController } from './ticket-notes.controller';
 import { TicketNotesRepository } from './ticket-notes.repository';
 import { TicketNotesService } from './ticket-notes.service';
 
-@Module({ imports: [TypeOrmModule.forFeature([TicketNote]), AuthModule, TicketsModule], controllers: [TicketNotesController], providers: [TicketNotesRepository, TicketNotesService] })
+@Module({
+  imports: [TypeOrmModule.forFeature([TicketNote]), AuthModule, TicketsModule],
+  controllers: [TicketNotesController],
+  providers: [TicketNotesRepository, TicketNotesService],
+})
 export class TicketNotesModule {}

@@ -1,1 +1,43 @@
-.page{max-width:700px;margin:2rem auto;padding:0 1rem}dl,form{background:white;border:1px solid #e5e7eb;border-radius:8px;padding:1.2rem}dt{font-weight:700}dd{margin:0 0 .8rem}form{display:grid;gap:.55rem}input{font:inherit;padding:.65rem;border:1px solid #cbd2dc;border-radius:5px}button{justify-self:start;background:#155eef;color:white;border:0;border-radius:6px;padding:.65rem 1rem}.error,small{color:#b42318}.success{color:#067647}
+.page {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+dl,
+form {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1.2rem;
+}
+dt {
+  font-weight: 700;
+}
+dd {
+  margin: 0 0 0.8rem;
+}
+form {
+  display: grid;
+  gap: 0.55rem;
+}
+input {
+  font: inherit;
+  padding: 0.65rem;
+  border: 1px solid #cbd2dc;
+  border-radius: 5px;
+}
+button {
+  justify-self: start;
+  background: #155eef;
+  color: white;
+  border: 0;
+  border-radius: 6px;
+  padding: 0.65rem 1rem;
+}
+.error,
+small {
+  color: #b42318;
+}
+.success {
+  color: #067647;
+}

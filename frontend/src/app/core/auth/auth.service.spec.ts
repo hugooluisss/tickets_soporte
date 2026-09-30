@@ -13,7 +13,9 @@ describe('AuthService', () => {
   beforeEach(() => {
     localStorage.clear();
     login = vi.fn();
-    TestBed.configureTestingModule({ providers: [AuthService, { provide: AuthApiService, useValue: { login } }] });
+    TestBed.configureTestingModule({
+      providers: [AuthService, { provide: AuthApiService, useValue: { login } }],
+    });
     auth = TestBed.inject(AuthService);
   });
 

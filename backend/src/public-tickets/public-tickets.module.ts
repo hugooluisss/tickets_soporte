@@ -5,7 +5,11 @@ import { TicketsModule } from '../tickets/tickets.module';
 import { PublicTicketsController } from './public-tickets.controller';
 
 @Module({
-  imports: [ThrottlerModule.forRoot([{ name: 'default', ttl: 60_000, limit: 5 }]), ProjectsModule, TicketsModule],
+  imports: [
+    ThrottlerModule.forRoot([{ name: 'default', ttl: 60_000, limit: 5 }]),
+    ProjectsModule,
+    TicketsModule,
+  ],
   controllers: [PublicTicketsController],
   providers: [ThrottlerGuard],
 })

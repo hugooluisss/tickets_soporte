@@ -1,4 +1,10 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { User } from './user.entity';
 import { UserRole } from './user-role.enum';
@@ -10,8 +16,16 @@ export type PublicUser = Omit<User, 'passwordHash'>;
 export class UsersService {
   constructor(private readonly users: UsersRepository) {}
 
-  async create(input: { email: string; password: string; firstName: string; lastName: string; role?: UserRole; isActive?: boolean }): Promise<PublicUser> {
-    if (await this.users.findByEmail(input.email)) throw new ConflictException('Email is already in use');
+  async create(input: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    role?: UserRole;
+    isActive?: boolean;
+  }): Promise<PublicUser> {
+    if (await this.users.findByEmail(input.email))
+      throw new ConflictException('Email is already in use');
     const user = await this.users.create({
       email: input.email,
       passwordHash: await bcrypt.hash(input.password, 12),
@@ -33,7 +47,17 @@ export class UsersService {
     return this.toPublic(user);
   }
 
-  async update(id: string, input: Partial<{ email: string; password: string; firstName: string; lastName: string; role: UserRole; isActive: boolean }>): Promise<PublicUser> {
+  async update(
+    id: string,
+    input: Partial<{
+      email: string;
+      password: string;
+      firstName: string;
+      lastName: string;
+      role: UserRole;
+      isActive: boolean;
+    }>,
+  ): Promise<PublicUser> {
     const existing = await this.users.findById(id);
     if (!existing) throw new NotFoundException('User not found');
     if (input.email && input.email.toLowerCase() !== existing.email.toLowerCase()) {
@@ -63,14 +87,20 @@ export class UsersService {
 
   async authenticate(email: string, password: string): Promise<User> {
     const user = await this.findByEmail(email);
-    if (!user || !(await this.verifyPassword(user, password))) throw new UnauthorizedException('Invalid email or password');
+    if (!user || !(await this.verifyPassword(user, password)))
+      throw new UnauthorizedException('Invalid email or password');
     if (!user.isActive) throw new UnauthorizedException('Account is deactivated');
     return user;
   }
 
-  async verifyAndUpdatePassword(id: string, currentPassword: string, newPassword: string): Promise<void> {
+  async verifyAndUpdatePassword(
+    id: string,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<void> {
     const user = await this.users.findByEmail((await this.findById(id)).email);
-    if (!user || !(await this.verifyPassword(user, currentPassword))) throw new BadRequestException('Current password is incorrect');
+    if (!user || !(await this.verifyPassword(user, currentPassword)))
+      throw new BadRequestException('Current password is incorrect');
     await this.users.update(id, { passwordHash: await bcrypt.hash(newPassword, 12) });
   }
 

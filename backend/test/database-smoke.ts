@@ -10,7 +10,14 @@ async function run(): Promise<void> {
     await dataSource.runMigrations();
     const repository = new UsersRepository(dataSource.getRepository('User') as any);
     const email = `db-smoke-${Date.now()}@example.com`;
-    const created = await repository.create({ email, passwordHash: 'test-hash', firstName: 'DB', lastName: 'Smoke', role: UserRole.USER, isActive: true });
+    const created = await repository.create({
+      email,
+      passwordHash: 'test-hash',
+      firstName: 'DB',
+      lastName: 'Smoke',
+      role: UserRole.USER,
+      isActive: true,
+    });
     assert.ok(created.id);
     assert.equal((await repository.findById(created.id))?.email, email);
     assert.equal((await repository.findByEmail(email))?.id, created.id);

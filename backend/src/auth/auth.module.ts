@@ -10,7 +10,18 @@ import { JwtStrategy } from './jwt.strategy';
 import { RolesGuard } from './roles.guard';
 
 @Module({
-  imports: [UsersModule, PassportModule, JwtModule.registerAsync({ imports: [ConfigModule], inject: [ConfigService], useFactory: (config: ConfigService) => ({ secret: config.getOrThrow<string>('JWT_SECRET'), signOptions: { expiresIn: config.get<string>('JWT_EXPIRES_IN', '8h') } }) })],
+  imports: [
+    UsersModule,
+    PassportModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: config.getOrThrow<string>('JWT_SECRET'),
+        signOptions: { expiresIn: config.get<string>('JWT_EXPIRES_IN', '8h') },
+      }),
+    }),
+  ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, JwtAuthGuard, RolesGuard],
   exports: [JwtAuthGuard, RolesGuard],

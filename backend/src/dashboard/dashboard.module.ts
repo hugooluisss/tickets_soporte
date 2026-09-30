@@ -4,5 +4,9 @@ import { TicketsModule } from '../tickets/tickets.module';
 import { TicketCommentsModule } from '../ticket-comments/ticket-comments.module';
 import { DashboardController } from './dashboard.controller';
 import { DashboardService } from './dashboard.service';
-@Module({ imports: [AuthModule, TicketsModule, TicketCommentsModule], controllers: [DashboardController], providers: [DashboardService] })
+@Module({
+  imports: [AuthModule, TicketsModule, TicketCommentsModule],
+  controllers: [DashboardController],
+  providers: [DashboardService],
+})
 export class DashboardModule {}

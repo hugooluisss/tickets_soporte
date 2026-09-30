@@ -26,7 +26,9 @@ describe('FormFieldComponent', () => {
   it('shows an error after an invalid control is touched', () => {
     control.markAsTouched();
     fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('[role="alert"]')?.textContent).toContain('Name is required.');
+    expect(fixture.nativeElement.querySelector('[role="alert"]')?.textContent).toContain(
+      'Name is required.',
+    );
   });
 
   it('hides the error after a touched control becomes valid', () => {

@@ -11,7 +11,20 @@ describe('ProjectForm', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ProjectForm],
-      providers: [provideRouter([]), { provide: ProjectsService, useValue: { list: () => of([]), get: () => of({ id: '', name: '', description: null }), create: () => of({ id: '', name: '', description: null }), update: () => of({ id: '', name: '', description: null }), delete: () => of({ deleted: true }), tickets: () => of([]) } }],
+      providers: [
+        provideRouter([]),
+        {
+          provide: ProjectsService,
+          useValue: {
+            list: () => of([]),
+            get: () => of({ id: '', name: '', description: null }),
+            create: () => of({ id: '', name: '', description: null }),
+            update: () => of({ id: '', name: '', description: null }),
+            delete: () => of({ deleted: true }),
+            tickets: () => of([]),
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProjectForm);

@@ -21,7 +21,9 @@ export const routes: Routes = [
   { path: 'public/projects/:projectId/new-ticket', component: PublicTicketFormComponent },
   { path: 'public/tickets/:token', component: PublicTicketTrackingComponent },
   {
-    path: '', component: AppShellComponent, canActivate: [authGuard],
+    path: '',
+    component: AppShellComponent,
+    canActivate: [authGuard],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       { path: 'tickets', component: TicketList },
@@ -38,7 +40,12 @@ export const routes: Routes = [
       { path: 'reports', component: ReportsView },
       { path: 'admin', component: UserList, canActivate: [roleGuard], data: { role: 'admin' } },
       { path: 'admin/new', component: UserForm, canActivate: [roleGuard], data: { role: 'admin' } },
-      { path: 'admin/:id/edit', component: UserForm, canActivate: [roleGuard], data: { role: 'admin' } },
+      {
+        path: 'admin/:id/edit',
+        component: UserForm,
+        canActivate: [roleGuard],
+        data: { role: 'admin' },
+      },
     ],
   },
   { path: '**', redirectTo: '' },

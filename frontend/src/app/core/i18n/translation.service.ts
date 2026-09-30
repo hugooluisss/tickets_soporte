@@ -22,7 +22,8 @@ export class TranslationService {
   private resolveLanguage(): Lang {
     const saved = typeof localStorage === 'undefined' ? null : localStorage.getItem('lang');
     if (saved === 'en' || saved === 'es') return saved;
-    const browserLanguage = typeof navigator === 'undefined' ? '' : navigator.language.toLowerCase();
+    const browserLanguage =
+      typeof navigator === 'undefined' ? '' : navigator.language.toLowerCase();
     return browserLanguage === 'es' || browserLanguage.startsWith('es-') ? 'es' : 'en';
   }
 }

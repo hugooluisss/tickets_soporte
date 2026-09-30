@@ -8,13 +8,17 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
   const auth = inject(AuthService);
   const router = inject(Router);
   const token = auth.token;
-  const outgoing = token ? request.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : request;
+  const outgoing = token
+    ? request.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
+    : request;
 
-  return next(outgoing).pipe(catchError((error: unknown) => {
-    if (error instanceof HttpErrorResponse && error.status === 401) {
-      auth.logout();
-      void router.navigate(['/login']);
-    }
-    return throwError(() => error);
-  }));
+  return next(outgoing).pipe(
+    catchError((error: unknown) => {
+      if (error instanceof HttpErrorResponse && error.status === 401) {
+        auth.logout();
+        void router.navigate(['/login']);
+      }
+      return throwError(() => error);
+    }),
+  );
 };

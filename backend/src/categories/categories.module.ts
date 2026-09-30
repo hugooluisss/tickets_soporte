@@ -5,5 +5,10 @@ import { Category } from './category.entity';
 import { CategoriesController } from './categories.controller';
 import { CategoriesRepository } from './categories.repository';
 import { CategoriesService } from './categories.service';
-@Module({ imports: [TypeOrmModule.forFeature([Category]), AuthModule], controllers: [CategoriesController], providers: [CategoriesRepository, CategoriesService], exports: [CategoriesRepository] })
+@Module({
+  imports: [TypeOrmModule.forFeature([Category]), AuthModule],
+  controllers: [CategoriesController],
+  providers: [CategoriesRepository, CategoriesService],
+  exports: [CategoriesRepository],
+})
 export class CategoriesModule {}

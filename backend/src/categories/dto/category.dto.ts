@@ -1,2 +1,4 @@
 import { IsString, MaxLength, MinLength } from 'class-validator';
-export class CategoryDto { @IsString() @MinLength(1) @MaxLength(150) name!: string; }
+export class CategoryDto {
+  @IsString() @MinLength(1) @MaxLength(150) name!: string;
+}

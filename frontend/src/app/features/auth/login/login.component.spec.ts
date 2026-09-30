@@ -9,7 +9,12 @@ import { LoginComponent } from './login.component';
 describe('LoginComponent', () => {
   it('creates a login form and calls AuthService with valid credentials', () => {
     localStorage.clear();
-    const login = vi.fn(() => of({ accessToken: 'token', user: { id: '1', name: 'A', email: 'a@b.com', role: 'user' as const } }));
+    const login = vi.fn(() =>
+      of({
+        accessToken: 'token',
+        user: { id: '1', name: 'A', email: 'a@b.com', role: 'user' as const },
+      }),
+    );
     const navigateByUrl = vi.fn();
     TestBed.configureTestingModule({
       imports: [LoginComponent],

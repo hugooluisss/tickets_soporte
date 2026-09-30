@@ -54,14 +54,26 @@ export class AuthService {
   }
 
   private readStorage(key: string): string | null {
-    try { return globalThis.localStorage?.getItem(key) ?? null; } catch { return null; }
+    try {
+      return globalThis.localStorage?.getItem(key) ?? null;
+    } catch {
+      return null;
+    }
   }
 
   private writeStorage(key: string, value: string): void {
-    try { globalThis.localStorage?.setItem(key, value); } catch { /* Storage may be unavailable. */ }
+    try {
+      globalThis.localStorage?.setItem(key, value);
+    } catch {
+      /* Storage may be unavailable. */
+    }
   }
 
   private removeStorage(key: string): void {
-    try { globalThis.localStorage?.removeItem(key); } catch { /* Storage may be unavailable. */ }
+    try {
+      globalThis.localStorage?.removeItem(key);
+    } catch {
+      /* Storage may be unavailable. */
+    }
   }
 }

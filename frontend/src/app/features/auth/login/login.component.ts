@@ -7,7 +7,11 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { FormFieldComponent } from '../../../shared/form-field/form-field.component';
 import { TranslationService } from '../../../core/i18n/translation.service';
 
-@Component({ selector: 'app-login', imports: [ReactiveFormsModule, FormFieldComponent, TranslatePipe], templateUrl: './login.component.html' })
+@Component({
+  selector: 'app-login',
+  imports: [ReactiveFormsModule, FormFieldComponent, TranslatePipe],
+  templateUrl: './login.component.html',
+})
 export class LoginComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly auth = inject(AuthService);
@@ -16,18 +20,32 @@ export class LoginComponent {
   private readonly route = inject(ActivatedRoute);
   readonly submitting = signal(false);
   readonly errorMessage = signal('');
-  readonly form = this.formBuilder.nonNullable.group({ email: ['', [Validators.required, Validators.email]], password: ['', Validators.required] });
+  readonly form = this.formBuilder.nonNullable.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', Validators.required],
+  });
 
   submit(): void {
     this.errorMessage.set('');
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     this.submitting.set(true);
-    this.auth.login(this.form.getRawValue()).pipe(finalize(() => this.submitting.set(false))).subscribe({
-      next: () => void this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') || '/'),
-      error: (error: { error?: { message?: string | string[] } }) => {
-        const message = error.error?.message;
-        this.errorMessage.set(Array.isArray(message) ? message.join(', ') : message || this.translations.t('login.defaultError'));
-      },
-    });
+    this.auth
+      .login(this.form.getRawValue())
+      .pipe(finalize(() => this.submitting.set(false)))
+      .subscribe({
+        next: () =>
+          void this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') || '/'),
+        error: (error: { error?: { message?: string | string[] } }) => {
+          const message = error.error?.message;
+          this.errorMessage.set(
+            Array.isArray(message)
+              ? message.join(', ')
+              : message || this.translations.t('login.defaultError'),
+          );
+        },
+      });
   }
 }

@@ -16,7 +16,8 @@ export class UsersRepository {
   }
 
   findByEmail(email: string): Promise<User | null> {
-    return this.repository.createQueryBuilder('user')
+    return this.repository
+      .createQueryBuilder('user')
       .addSelect('user.passwordHash')
       .where('LOWER(user.email) = LOWER(:email)', { email })
       .getOne();

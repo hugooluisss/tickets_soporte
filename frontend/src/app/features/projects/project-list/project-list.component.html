@@ -1,1 +1,55 @@
-<section class="page"><header><div><h1>{{ 'nav.projects' | translate }}</h1><p>{{ 'project.organize' | translate }}</p></div><a class="button" routerLink="/projects/new">{{ 'project.newAction' | translate }}</a></header>@if (error()) { <p class="error" role="alert">{{ error() }}</p> }<div class="table-wrap"><table><thead><tr><th>{{ 'common.name' | translate }}</th><th>{{ 'common.description' | translate }}</th><th>{{ 'project.tickets' | translate }}</th><th>{{ 'project.pending' | translate }}</th><th>{{ 'common.actions' | translate }}</th></tr></thead><tbody>@for (project of rows(); track project.id) { <tr><td>{{ project.name }}</td><td>{{ project.description || '—' }}</td><td>{{ project.ticketCount ?? 0 }}</td><td>{{ project.pendingTicketCount ?? 0 }}</td><td class="row-actions"><a [routerLink]="['/projects', project.id, 'edit']" [attr.aria-label]="'common.edit' | translate" [attr.title]="'common.edit' | translate"><app-icon name="edit" /></a><button class="row-action" type="button" (click)="remove(project)" [attr.aria-label]="'common.delete' | translate" [attr.title]="'common.delete' | translate"><app-icon name="delete" /></button></td></tr> } @empty { <tr><td colspan="5">{{ 'project.none' | translate }}</td></tr> }</tbody></table></div></section>
+<section class="page">
+  <header>
+    <div>
+      <h1>{{ 'nav.projects' | translate }}</h1>
+      <p>{{ 'project.organize' | translate }}</p>
+    </div>
+    <a class="button" routerLink="/projects/new">{{ 'project.newAction' | translate }}</a>
+  </header>
+  @if (error()) {
+    <p class="error" role="alert">{{ error() }}</p>
+  }
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>{{ 'common.name' | translate }}</th>
+          <th>{{ 'common.description' | translate }}</th>
+          <th>{{ 'project.tickets' | translate }}</th>
+          <th>{{ 'project.pending' | translate }}</th>
+          <th>{{ 'common.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (project of rows(); track project.id) {
+          <tr>
+            <td>{{ project.name }}</td>
+            <td>{{ project.description || '—' }}</td>
+            <td>{{ project.ticketCount ?? 0 }}</td>
+            <td>{{ project.pendingTicketCount ?? 0 }}</td>
+            <td class="row-actions">
+              <a
+                [routerLink]="['/projects', project.id, 'edit']"
+                [attr.aria-label]="'common.edit' | translate"
+                [attr.title]="'common.edit' | translate"
+                ><app-icon name="edit" /></a
+              ><button
+                class="row-action"
+                type="button"
+                (click)="remove(project)"
+                [attr.aria-label]="'common.delete' | translate"
+                [attr.title]="'common.delete' | translate"
+              >
+                <app-icon name="delete" />
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="5">{{ 'project.none' | translate }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

@@ -7,12 +7,22 @@ import { UserList } from './user-list.component';
 
 describe('UserList', () => {
   let fixture: ComponentFixture<UserList>;
-  const user: User = { id: 'u1', email: 'ada@example.com', firstName: 'Ada', lastName: 'Lovelace', role: 'admin', isActive: true };
+  const user: User = {
+    id: 'u1',
+    email: 'ada@example.com',
+    firstName: 'Ada',
+    lastName: 'Lovelace',
+    role: 'admin',
+    isActive: true,
+  };
   let service: { list: ReturnType<typeof vi.fn>; delete: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
     service = { list: vi.fn(() => of([user])), delete: vi.fn(() => of({ deleted: true })) };
-    await TestBed.configureTestingModule({ imports: [UserList], providers: [provideRouter([]), { provide: UsersService, useValue: service }] }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [UserList],
+      providers: [provideRouter([]), { provide: UsersService, useValue: service }],
+    }).compileComponents();
     fixture = TestBed.createComponent(UserList);
     vi.stubGlobal('confirm', () => true);
     await fixture.whenStable();

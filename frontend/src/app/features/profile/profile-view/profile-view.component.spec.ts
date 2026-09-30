@@ -11,7 +11,17 @@ describe('ProfileView', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ProfileView],
-      providers: [provideRouter([]), { provide: ProfileService, useValue: { get: () => of({ id: '', email: '', firstName: '', lastName: '', role: 'admin', isActive: true }), changePassword: () => of({ changed: true }) } }],
+      providers: [
+        provideRouter([]),
+        {
+          provide: ProfileService,
+          useValue: {
+            get: () =>
+              of({ id: '', email: '', firstName: '', lastName: '', role: 'admin', isActive: true }),
+            changePassword: () => of({ changed: true }),
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProfileView);

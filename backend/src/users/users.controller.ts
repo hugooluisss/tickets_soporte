@@ -8,7 +8,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
-interface AuthenticatedRequest extends Request { user: { id: string } }
+interface AuthenticatedRequest extends Request {
+  user: { id: string };
+}
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -17,16 +19,24 @@ export class UsersController {
   constructor(private readonly users: UsersService) {}
 
   @Get()
-  findAll() { return this.users.findAll(); }
+  findAll() {
+    return this.users.findAll();
+  }
 
   @Post()
-  create(@Body() input: CreateUserDto) { return this.users.create(input); }
+  create(@Body() input: CreateUserDto) {
+    return this.users.create(input);
+  }
 
   @Get(':id')
-  findById(@Param('id') id: string) { return this.users.findById(id); }
+  findById(@Param('id') id: string) {
+    return this.users.findById(id);
+  }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() input: UpdateUserDto) { return this.users.update(id, input); }
+  update(@Param('id') id: string, @Body() input: UpdateUserDto) {
+    return this.users.update(id, input);
+  }
 
   @Delete(':id')
   async delete(@Param('id') id: string, @Req() request: AuthenticatedRequest) {

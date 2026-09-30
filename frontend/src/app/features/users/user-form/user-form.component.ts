@@ -6,7 +6,11 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormFieldComponent } from '../../../shared/form-field/form-field.component';
 import { UsersService } from '../users.service';
 
-@Component({ selector: 'app-user-form', imports: [ReactiveFormsModule, RouterLink, FormFieldComponent, TranslatePipe], templateUrl: './user-form.component.html' })
+@Component({
+  selector: 'app-user-form',
+  imports: [ReactiveFormsModule, RouterLink, FormFieldComponent, TranslatePipe],
+  templateUrl: './user-form.component.html',
+})
 export class UserForm {
   private readonly translations = inject(TranslationService);
   private readonly fb = inject(FormBuilder);
@@ -22,27 +26,53 @@ export class UserForm {
     lastName: ['', Validators.required],
     role: ['user' as 'admin' | 'user', Validators.required],
     isActive: ['true', Validators.required],
-    password: ['', this.id ? Validators.minLength(8) : [Validators.required, Validators.minLength(8)]],
+    password: [
+      '',
+      this.id ? Validators.minLength(8) : [Validators.required, Validators.minLength(8)],
+    ],
   });
 
   constructor() {
-    if (this.id) this.users.get(this.id).subscribe({
-      next: user => this.form.patchValue({ email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role, isActive: String(user.isActive) }),
-      error: () => this.error.set(this.translations.t('user.loadOneError')),
-    });
+    if (this.id)
+      this.users.get(this.id).subscribe({
+        next: (user) =>
+          this.form.patchValue({
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: user.role,
+            isActive: String(user.isActive),
+          }),
+        error: () => this.error.set(this.translations.t('user.loadOneError')),
+      });
   }
 
   save(): void {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     this.saving.set(true);
     const value = this.form.getRawValue();
-    const details = { email: value.email, firstName: value.firstName, lastName: value.lastName, role: value.role, isActive: value.isActive === 'true' };
+    const details = {
+      email: value.email,
+      firstName: value.firstName,
+      lastName: value.lastName,
+      role: value.role,
+      isActive: value.isActive === 'true',
+    };
     const request = this.id
-      ? this.users.update(this.id, { ...details, ...(value.password ? { password: value.password } : {}) })
+      ? this.users.update(this.id, {
+          ...details,
+          ...(value.password ? { password: value.password } : {}),
+        })
       : this.users.create({ ...details, password: value.password });
     request.subscribe({
       next: () => void this.router.navigate(['/admin']),
-      error: () => { this.saving.set(false); this.error.set(this.translations.t('user.saveError')); },
+      error: () => {
+        this.saving.set(false);
+        this.error.set(this.translations.t('user.saveError'));
+      },
     });
   }
 }

@@ -14,7 +14,10 @@ export class EmailNotifierService {
       host: config.get<string>('SMTP_HOST', 'localhost'),
       port: config.get<number>('SMTP_PORT', 587),
       secure: config.get<number>('SMTP_PORT', 587) === 465,
-      auth: { user: config.get<string>('SMTP_USER', ''), pass: config.get<string>('SMTP_PASSWORD', '') },
+      auth: {
+        user: config.get<string>('SMTP_USER', ''),
+        pass: config.get<string>('SMTP_PASSWORD', ''),
+      },
     });
     this.from = config.get<string>('SMTP_FROM', 'tickets@example.com');
   }
@@ -22,11 +25,18 @@ export class EmailNotifierService {
   notify(ticket: Ticket): void {
     if (!ticket.reporterEmail || !ticket.reporterEmailNotifications) return;
     const status = ticket.status.replace('_', ' ');
-    void this.transporter.sendMail({
-      from: this.from,
-      to: ticket.reporterEmail,
-      subject: `Ticket updated: ${ticket.title}`,
-      text: `Your ticket "${ticket.title}" has been updated. Current status: ${status}.`,
-    }).catch((error: unknown) => this.logger.error(`Email delivery failed for ticket ${ticket.id}`, error instanceof Error ? error.stack : String(error)));
+    void this.transporter
+      .sendMail({
+        from: this.from,
+        to: ticket.reporterEmail,
+        subject: `Ticket updated: ${ticket.title}`,
+        text: `Your ticket "${ticket.title}" has been updated. Current status: ${status}.`,
+      })
+      .catch((error: unknown) =>
+        this.logger.error(
+          `Email delivery failed for ticket ${ticket.id}`,
+          error instanceof Error ? error.stack : String(error),
+        ),
+      );
   }
 }

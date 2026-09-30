@@ -16,7 +16,39 @@ describe('TicketForm', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [TicketForm],
-      providers: [provideRouter([]), { provide: AuthService, useValue: { hasRole: () => false } }, { provide: ProjectsService, useValue: { list: () => of([]) } }, { provide: CategoriesService, useValue: { list: () => of([]) } }, { provide: UsersService, useValue: { list: () => of([]) } }, { provide: TicketsService, useValue: { list: () => of([]), get: () => of({ id: '', title: '', description: null, kind: 'ticket', priority: 'medium', status: 'pending', projectId: null, categoryId: null, assignedToId: null, createdAt: '', updatedAt: '' }), create: () => of({}), update: () => of({}), delete: () => of({ deleted: true }), listNotes: () => of([]), createNote: vi.fn(), deleteNote: vi.fn() } }],
+      providers: [
+        provideRouter([]),
+        { provide: AuthService, useValue: { hasRole: () => false } },
+        { provide: ProjectsService, useValue: { list: () => of([]) } },
+        { provide: CategoriesService, useValue: { list: () => of([]) } },
+        { provide: UsersService, useValue: { list: () => of([]) } },
+        {
+          provide: TicketsService,
+          useValue: {
+            list: () => of([]),
+            get: () =>
+              of({
+                id: '',
+                title: '',
+                description: null,
+                kind: 'ticket',
+                priority: 'medium',
+                status: 'pending',
+                projectId: null,
+                categoryId: null,
+                assignedToId: null,
+                createdAt: '',
+                updatedAt: '',
+              }),
+            create: () => of({}),
+            update: () => of({}),
+            delete: () => of({ deleted: true }),
+            listNotes: () => of([]),
+            createNote: vi.fn(),
+            deleteNote: vi.fn(),
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TicketForm);

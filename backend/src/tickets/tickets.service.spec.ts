@@ -5,110 +5,290 @@ import { TicketPriority } from './ticket-priority.enum';
 import { TicketStatus } from './ticket-status.enum';
 
 describe('TicketsService', () => {
-  const tickets: any = { findAll: jest.fn(), findById: jest.fn(), findByTrackingToken: jest.fn(), create: jest.fn(), update: jest.fn(), delete: jest.fn(), summary: jest.fn(), aggregates: jest.fn() };
-  const users: any = { findById: jest.fn() }; const projects: any = { findById: jest.fn() }; const categories: any = { findById: jest.fn() };
+  const tickets: any = {
+    findAll: jest.fn(),
+    findById: jest.fn(),
+    findByTrackingToken: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    summary: jest.fn(),
+    aggregates: jest.fn(),
+  };
+  const users: any = { findById: jest.fn() };
+  const projects: any = { findById: jest.fn() };
+  const categories: any = { findById: jest.fn() };
   let service: TicketsService;
-  const webhooks: any = { notify: jest.fn() }; const emails: any = { notify: jest.fn() };
-  beforeEach(() => { jest.clearAllMocks(); service = new TicketsService(tickets, users, projects, categories, webhooks, emails); });
+  const webhooks: any = { notify: jest.fn() };
+  const emails: any = { notify: jest.fn() };
+  beforeEach(() => {
+    jest.clearAllMocks();
+    service = new TicketsService(tickets, users, projects, categories, webhooks, emails);
+  });
   it('creates a minimal ticket with default values and creator', async () => {
     tickets.create.mockImplementation(async (row: any) => row);
     const result = await service.create({ title: 'Issue' }, 'u1');
-    expect(result).toMatchObject({ title: 'Issue', createdById: 'u1', kind: TicketKind.TICKET, priority: TicketPriority.MEDIUM, status: TicketStatus.PENDING, projectId: null, categoryId: null });
+    expect(result).toMatchObject({
+      title: 'Issue',
+      createdById: 'u1',
+      kind: TicketKind.TICKET,
+      priority: TicketPriority.MEDIUM,
+      status: TicketStatus.PENDING,
+      projectId: null,
+      categoryId: null,
+    });
     expect(result.trackingToken).toMatch(/^[A-Za-z0-9_-]{43}$/);
   });
   it('rejects a missing title and invalid enum values', async () => {
     await expect(service.create({}, 'u1')).rejects.toBeInstanceOf(BadRequestException);
-    await expect(service.create({ title: 'x', kind: 'wrong' as any }, 'u1')).rejects.toBeInstanceOf(BadRequestException);
-    await expect(service.create({ title: 'x', priority: 'urgent' as any }, 'u1')).rejects.toBeInstanceOf(BadRequestException);
-    await expect(service.create({ title: 'x', status: 'open' as any }, 'u1')).rejects.toBeInstanceOf(BadRequestException);
+    await expect(service.create({ title: 'x', kind: 'wrong' as any }, 'u1')).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
+    await expect(
+      service.create({ title: 'x', priority: 'urgent' as any }, 'u1'),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    await expect(
+      service.create({ title: 'x', status: 'open' as any }, 'u1'),
+    ).rejects.toBeInstanceOf(BadRequestException);
   });
   it('creates public tickets with reporter identity and fixed defaults, then notifies asynchronously', async () => {
-    projects.findById.mockResolvedValue({ id: 'p1', name: 'Alpha', webhookUrl: 'https://example.com/hook' });
+    projects.findById.mockResolvedValue({
+      id: 'p1',
+      name: 'Alpha',
+      webhookUrl: 'https://example.com/hook',
+    });
     tickets.create.mockImplementation(async (row: any) => ({ id: 't1', ...row }));
-    const created = await service.createPublic('p1', { reporterName: ' Client ', reporterEmail: 'client@example.com', reporterLocation: ' City ', title: ' Issue ', kind: TicketKind.BUG });
-    expect(created).toMatchObject({ createdById: null, reporterName: 'Client', reporterEmail: 'client@example.com', reporterLocation: 'City', reporterEmailNotifications: false, title: 'Issue', kind: TicketKind.BUG, status: TicketStatus.PENDING, priority: TicketPriority.MEDIUM, assignedToId: null, categoryId: null });
-    expect(webhooks.notify).toHaveBeenCalledWith('https://example.com/hook', expect.objectContaining({ ticketId: 't1', projectId: 'p1', projectName: 'Alpha', reporterName: 'Client', reporterEmail: 'client@example.com' }));
+    const created = await service.createPublic('p1', {
+      reporterName: ' Client ',
+      reporterEmail: 'client@example.com',
+      reporterLocation: ' City ',
+      title: ' Issue ',
+      kind: TicketKind.BUG,
+    });
+    expect(created).toMatchObject({
+      createdById: null,
+      reporterName: 'Client',
+      reporterEmail: 'client@example.com',
+      reporterLocation: 'City',
+      reporterEmailNotifications: false,
+      title: 'Issue',
+      kind: TicketKind.BUG,
+      status: TicketStatus.PENDING,
+      priority: TicketPriority.MEDIUM,
+      assignedToId: null,
+      categoryId: null,
+    });
+    expect(webhooks.notify).toHaveBeenCalledWith(
+      'https://example.com/hook',
+      expect.objectContaining({
+        ticketId: 't1',
+        projectId: 'p1',
+        projectName: 'Alpha',
+        reporterName: 'Client',
+        reporterEmail: 'client@example.com',
+      }),
+    );
     expect(created.trackingToken).toMatch(/^[A-Za-z0-9_-]{43}$/);
-    expect(created.trackingToken).not.toBe((await service.createPublic('p1', { reporterName: 'C', reporterEmail: 'c@example.com', title: 'Another' })).trackingToken);
+    expect(created.trackingToken).not.toBe(
+      (
+        await service.createPublic('p1', {
+          reporterName: 'C',
+          reporterEmail: 'c@example.com',
+          title: 'Another',
+        })
+      ).trackingToken,
+    );
   });
   it('retries a tracking token collision and returns only public fields', async () => {
-    tickets.create.mockRejectedValueOnce({ code: 'ER_DUP_ENTRY' }).mockImplementationOnce(async (row: any) => row);
+    tickets.create
+      .mockRejectedValueOnce({ code: 'ER_DUP_ENTRY' })
+      .mockImplementationOnce(async (row: any) => row);
     const created = await service.create({ title: 'Issue' }, 'u1');
     expect(tickets.create).toHaveBeenCalledTimes(2);
-    tickets.findByTrackingToken.mockResolvedValue({ ...created, id: 'secret', reporterEmail: 'private@example.com', assignedToId: 'u2', categoryId: 'c1' });
-    await expect(service.findPublicByTrackingToken(created.trackingToken)).resolves.toEqual({ title: 'Issue', status: TicketStatus.PENDING, createdAt: undefined, kind: TicketKind.TICKET });
+    tickets.findByTrackingToken.mockResolvedValue({
+      ...created,
+      id: 'secret',
+      reporterEmail: 'private@example.com',
+      assignedToId: 'u2',
+      categoryId: 'c1',
+    });
+    await expect(service.findPublicByTrackingToken(created.trackingToken)).resolves.toEqual({
+      title: 'Issue',
+      status: TicketStatus.PENDING,
+      createdAt: undefined,
+      kind: TicketKind.TICKET,
+    });
   });
   it('returns not found for an unknown tracking token', async () => {
     tickets.findByTrackingToken.mockResolvedValue(null);
-    await expect(service.findPublicByTrackingToken('unknown')).rejects.toBeInstanceOf(NotFoundException);
+    await expect(service.findPublicByTrackingToken('unknown')).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
   });
   it('defaults the kind for public ticket creation when it is omitted', async () => {
     projects.findById.mockResolvedValue({ id: 'p1', name: 'Alpha' });
     tickets.create.mockImplementation(async (row: any) => ({ id: 't1', ...row }));
-    const result = await service.createPublic('p1', { reporterName: 'Client', reporterEmail: 'client@example.com', title: 'Issue' } as any);
+    const result = await service.createPublic('p1', {
+      reporterName: 'Client',
+      reporterEmail: 'client@example.com',
+      title: 'Issue',
+    } as any);
     expect(result.kind).toBe(TicketKind.TICKET);
   });
   it('persists an explicit public email notification opt-in', async () => {
     projects.findById.mockResolvedValue({ id: 'p1', name: 'Alpha' });
     tickets.create.mockImplementation(async (row: any) => ({ id: 't1', ...row }));
-    const result = await service.createPublic('p1', { reporterName: 'Client', reporterEmail: 'client@example.com', title: 'Issue', reporterEmailNotifications: true });
+    const result = await service.createPublic('p1', {
+      reporterName: 'Client',
+      reporterEmail: 'client@example.com',
+      title: 'Issue',
+      reporterEmailNotifications: true,
+    });
     expect(result.reporterEmailNotifications).toBe(true);
   });
   it('rejects public tickets with missing name, email, title, or project', async () => {
-    await expect(service.createPublic('p1', { reporterName: '', reporterEmail: 'x@y.z', title: 'X', kind: TicketKind.TICKET })).rejects.toBeInstanceOf(BadRequestException);
-    await expect(service.createPublic('p1', { reporterName: 'Name', reporterEmail: '', title: 'X', kind: TicketKind.TICKET })).rejects.toBeInstanceOf(BadRequestException);
-    await expect(service.createPublic('p1', { reporterName: 'Name', reporterEmail: 'x@y.z', title: ' ', kind: TicketKind.TICKET })).rejects.toBeInstanceOf(BadRequestException);
+    await expect(
+      service.createPublic('p1', {
+        reporterName: '',
+        reporterEmail: 'x@y.z',
+        title: 'X',
+        kind: TicketKind.TICKET,
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    await expect(
+      service.createPublic('p1', {
+        reporterName: 'Name',
+        reporterEmail: '',
+        title: 'X',
+        kind: TicketKind.TICKET,
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    await expect(
+      service.createPublic('p1', {
+        reporterName: 'Name',
+        reporterEmail: 'x@y.z',
+        title: ' ',
+        kind: TicketKind.TICKET,
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
     projects.findById.mockResolvedValue(null);
-    await expect(service.createPublic('missing', { reporterName: 'Name', reporterEmail: 'x@y.z', title: 'X', kind: TicketKind.TICKET })).rejects.toBeInstanceOf(BadRequestException);
+    await expect(
+      service.createPublic('missing', {
+        reporterName: 'Name',
+        reporterEmail: 'x@y.z',
+        title: 'X',
+        kind: TicketKind.TICKET,
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
     expect(tickets.create).not.toHaveBeenCalled();
   });
   it('validates references, validates and clears assignee', async () => {
     users.findById.mockResolvedValue(null);
-    await expect(service.create({ title: 'x', assignedToId: 'missing' }, 'u1')).rejects.toBeInstanceOf(BadRequestException);
-    users.findById.mockResolvedValue({ id: 'u2' }); projects.findById.mockResolvedValue({ id: 'p1' }); categories.findById.mockResolvedValue({ id: 'c1' });
+    await expect(
+      service.create({ title: 'x', assignedToId: 'missing' }, 'u1'),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    users.findById.mockResolvedValue({ id: 'u2' });
+    projects.findById.mockResolvedValue({ id: 'p1' });
+    categories.findById.mockResolvedValue({ id: 'c1' });
     tickets.create.mockImplementation(async (row: any) => row);
-    expect(await service.create({ title: 'x', assignedToId: 'u2', projectId: 'p1', categoryId: 'c1' }, 'u1')).toMatchObject({ assignedToId: 'u2' });
-    tickets.findById.mockResolvedValue({ id: 't1', title: 'x' }); tickets.update.mockResolvedValue({ id: 't1', title: 'x', assignedToId: null });
-    expect(await service.update('t1', { assignedToId: null })).toMatchObject({ assignedToId: null });
+    expect(
+      await service.create(
+        { title: 'x', assignedToId: 'u2', projectId: 'p1', categoryId: 'c1' },
+        'u1',
+      ),
+    ).toMatchObject({ assignedToId: 'u2' });
+    tickets.findById.mockResolvedValue({ id: 't1', title: 'x' });
+    tickets.update.mockResolvedValue({ id: 't1', title: 'x', assignedToId: null });
+    expect(await service.update('t1', { assignedToId: null })).toMatchObject({
+      assignedToId: null,
+    });
     users.findById.mockResolvedValue(null);
-    await expect(service.update('t1', { assignedToId: 'missing' })).rejects.toBeInstanceOf(BadRequestException);
+    await expect(service.update('t1', { assignedToId: 'missing' })).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
   });
   it('updates title and fields, rejecting empty titles and missing tickets', async () => {
-    tickets.findById.mockResolvedValue({ id: 't1' }); tickets.update.mockResolvedValue({ id: 't1', title: 'Changed' });
+    tickets.findById.mockResolvedValue({ id: 't1' });
+    tickets.update.mockResolvedValue({ id: 't1', title: 'Changed' });
     expect(await service.update('t1', { title: ' Changed ' })).toMatchObject({ title: 'Changed' });
     await expect(service.update('t1', { title: '  ' })).rejects.toBeInstanceOf(BadRequestException);
-    tickets.findById.mockResolvedValue(null); await expect(service.update('missing', { status: TicketStatus.DONE })).rejects.toBeInstanceOf(NotFoundException);
+    tickets.findById.mockResolvedValue(null);
+    await expect(service.update('missing', { status: TicketStatus.DONE })).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
   });
   it('emails only opted-in reporters on update and never on internal ticket creation', async () => {
     tickets.create.mockImplementation(async (row: any) => row);
     await service.create({ title: 'Internal issue' }, 'u1');
     expect(emails.notify).not.toHaveBeenCalled();
-    tickets.findById.mockResolvedValue({ id: 't1', reporterEmail: 'client@example.com', reporterEmailNotifications: true });
-    tickets.update.mockResolvedValue({ id: 't1', reporterEmail: 'client@example.com', reporterEmailNotifications: true, status: TicketStatus.DONE });
+    tickets.findById.mockResolvedValue({
+      id: 't1',
+      reporterEmail: 'client@example.com',
+      reporterEmailNotifications: true,
+    });
+    tickets.update.mockResolvedValue({
+      id: 't1',
+      reporterEmail: 'client@example.com',
+      reporterEmailNotifications: true,
+      status: TicketStatus.DONE,
+    });
     await service.update('t1', { status: TicketStatus.DONE });
-    expect(emails.notify).toHaveBeenCalledWith(expect.objectContaining({ reporterEmail: 'client@example.com' }));
-    tickets.findById.mockResolvedValue({ id: 't2', reporterEmail: 'client@example.com', reporterEmailNotifications: false });
-    tickets.update.mockResolvedValue({ id: 't2', reporterEmail: 'client@example.com', reporterEmailNotifications: false });
+    expect(emails.notify).toHaveBeenCalledWith(
+      expect.objectContaining({ reporterEmail: 'client@example.com' }),
+    );
+    tickets.findById.mockResolvedValue({
+      id: 't2',
+      reporterEmail: 'client@example.com',
+      reporterEmailNotifications: false,
+    });
+    tickets.update.mockResolvedValue({
+      id: 't2',
+      reporterEmail: 'client@example.com',
+      reporterEmailNotifications: false,
+    });
     await service.update('t2', { status: TicketStatus.DONE });
     expect(emails.notify).toHaveBeenCalledTimes(1);
     tickets.findById.mockResolvedValue({ id: 't3', reporterEmail: 'legacy@example.com' });
     tickets.update.mockResolvedValue({ id: 't3', reporterEmail: 'legacy@example.com' });
     await service.update('t3', { status: TicketStatus.DONE });
     expect(emails.notify).toHaveBeenCalledTimes(1);
-    tickets.findById.mockResolvedValue({ id: 't4', reporterEmail: null, reporterEmailNotifications: true });
-    tickets.update.mockResolvedValue({ id: 't4', reporterEmail: null, reporterEmailNotifications: true });
+    tickets.findById.mockResolvedValue({
+      id: 't4',
+      reporterEmail: null,
+      reporterEmailNotifications: true,
+    });
+    tickets.update.mockResolvedValue({
+      id: 't4',
+      reporterEmail: null,
+      reporterEmailNotifications: true,
+    });
     await service.update('t4', { status: TicketStatus.DONE });
     expect(emails.notify).toHaveBeenCalledTimes(1);
   });
   it('deletes tickets and delegates filtered queries', async () => {
-    tickets.findAll.mockResolvedValue([{ id: 't1' }]); expect(await service.findAll({ q: 'term' })).toHaveLength(1);
-    tickets.delete.mockResolvedValue(true); await expect(service.delete('t1')).resolves.toBeUndefined();
-    tickets.delete.mockResolvedValue(false); await expect(service.delete('missing')).rejects.toBeInstanceOf(NotFoundException);
+    tickets.findAll.mockResolvedValue([{ id: 't1' }]);
+    expect(await service.findAll({ q: 'term' })).toHaveLength(1);
+    tickets.delete.mockResolvedValue(true);
+    await expect(service.delete('t1')).resolves.toBeUndefined();
+    tickets.delete.mockResolvedValue(false);
+    await expect(service.delete('missing')).rejects.toBeInstanceOf(NotFoundException);
   });
   it('returns all status buckets, matching filtered tickets and aggregate counts', async () => {
-    tickets.findAll.mockResolvedValue([{ id: 't1' }]); tickets.aggregates.mockResolvedValue({ byStatus: [{ key: 'pending', count: 1 }], byProject: [{ id: null, name: 'unassigned project', count: 1 }], byCategory: [{ id: null, name: 'unassigned category', count: 1 }] });
+    tickets.findAll.mockResolvedValue([{ id: 't1' }]);
+    tickets.aggregates.mockResolvedValue({
+      byStatus: [{ key: 'pending', count: 1 }],
+      byProject: [{ id: null, name: 'unassigned project', count: 1 }],
+      byCategory: [{ id: null, name: 'unassigned category', count: 1 }],
+    });
     const result = await service.report({ projectId: 'p1', dateFrom: '2026-01-01' });
-    expect(result.tickets).toHaveLength(1); expect(result.byStatus).toEqual([{ key: 'pending', count: 1 }, { key: 'in_progress', count: 0 }, { key: 'done', count: 0 }, { key: 'cancelled', count: 0 }]);
-    expect(result.byProject[0]).toMatchObject({ name: 'unassigned project', count: 1 }); expect(result.byCategory[0]).toMatchObject({ name: 'unassigned category', count: 1 });
+    expect(result.tickets).toHaveLength(1);
+    expect(result.byStatus).toEqual([
+      { key: 'pending', count: 1 },
+      { key: 'in_progress', count: 0 },
+      { key: 'done', count: 0 },
+      { key: 'cancelled', count: 0 },
+    ]);
+    expect(result.byProject[0]).toMatchObject({ name: 'unassigned project', count: 1 });
+    expect(result.byCategory[0]).toMatchObject({ name: 'unassigned category', count: 1 });
   });
 });

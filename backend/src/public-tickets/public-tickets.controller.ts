@@ -8,10 +8,15 @@ import { CreatePublicTicketDto } from './dto/create-public-ticket.dto';
 @UseGuards(ThrottlerGuard)
 @Throttle({ default: { limit: 5, ttl: 60_000 } })
 export class PublicTicketsController {
-  constructor(private readonly projects: ProjectsService, private readonly tickets: TicketsService) {}
+  constructor(
+    private readonly projects: ProjectsService,
+    private readonly tickets: TicketsService,
+  ) {}
 
   @Get('tickets/:token')
-  tracking(@Param('token') token: string) { return this.tickets.findPublicByTrackingToken(token); }
+  tracking(@Param('token') token: string) {
+    return this.tickets.findPublicByTrackingToken(token);
+  }
 
   @Get('projects/:projectId')
   async findProject(@Param('projectId') projectId: string) {

@@ -1,4 +1,62 @@
 import { TranslationService } from '../../../core/i18n/translation.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
-import{Component,inject,signal}from'@angular/core';import{FormBuilder,ReactiveFormsModule}from'@angular/forms';import{Category,Project,TicketFilters,TicketReport,TicketKind,TicketPriority,TicketStatus}from'../../models';import{ReportsService}from'../reports.service';import{ProjectsService}from'../../projects/projects.service';import{CategoriesService}from'../../categories/categories.service';
-@Component({selector:'app-reports-view',imports:[ReactiveFormsModule,TranslatePipe],templateUrl:'./reports-view.component.html',styleUrl:'./reports-view.component.css'})export class ReportsView{private readonly translations=inject(TranslationService);private readonly fb=inject(FormBuilder);private readonly api=inject(ReportsService);readonly report=signal<TicketReport|null>(null);readonly error=signal('');readonly projects=signal<Project[]>([]);readonly categories=signal<Category[]>([]);readonly kinds:TicketKind[]=['ticket','bug','suggestion','feature'];readonly priorities:TicketPriority[]=['high','medium','low'];readonly statuses:TicketStatus[]=['pending','in_progress','done','cancelled'];readonly form=this.fb.nonNullable.group({q:[''],projectId:[''],categoryId:[''],priority:[''],status:[''],kind:[''],dateFrom:[''],dateTo:['']});constructor(){inject(ProjectsService).list().subscribe(v=>this.projects.set(v));inject(CategoriesService).list().subscribe(v=>this.categories.set(v));this.generate()}generate(){this.api.generate(this.form.getRawValue() as TicketFilters).subscribe({next:v=>{this.report.set(v);this.error.set('')},error:()=>this.error.set(this.translations.t('reports.generateError'))})}}
+import { Component, inject, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import {
+  Category,
+  Project,
+  TicketFilters,
+  TicketReport,
+  TicketKind,
+  TicketPriority,
+  TicketStatus,
+} from '../../models';
+import { ReportsService } from '../reports.service';
+import { ProjectsService } from '../../projects/projects.service';
+import { CategoriesService } from '../../categories/categories.service';
+@Component({
+  selector: 'app-reports-view',
+  imports: [ReactiveFormsModule, TranslatePipe],
+  templateUrl: './reports-view.component.html',
+  styleUrl: './reports-view.component.css',
+})
+export class ReportsView {
+  private readonly translations = inject(TranslationService);
+  private readonly fb = inject(FormBuilder);
+  private readonly api = inject(ReportsService);
+  readonly report = signal<TicketReport | null>(null);
+  readonly error = signal('');
+  readonly projects = signal<Project[]>([]);
+  readonly categories = signal<Category[]>([]);
+  readonly kinds: TicketKind[] = ['ticket', 'bug', 'suggestion', 'feature'];
+  readonly priorities: TicketPriority[] = ['high', 'medium', 'low'];
+  readonly statuses: TicketStatus[] = ['pending', 'in_progress', 'done', 'cancelled'];
+  readonly form = this.fb.nonNullable.group({
+    q: [''],
+    projectId: [''],
+    categoryId: [''],
+    priority: [''],
+    status: [''],
+    kind: [''],
+    dateFrom: [''],
+    dateTo: [''],
+  });
+  constructor() {
+    inject(ProjectsService)
+      .list()
+      .subscribe((v) => this.projects.set(v));
+    inject(CategoriesService)
+      .list()
+      .subscribe((v) => this.categories.set(v));
+    this.generate();
+  }
+  generate() {
+    this.api.generate(this.form.getRawValue() as TicketFilters).subscribe({
+      next: (v) => {
+        this.report.set(v);
+        this.error.set('');
+      },
+      error: () => this.error.set(this.translations.t('reports.generateError')),
+    });
+  }
+}

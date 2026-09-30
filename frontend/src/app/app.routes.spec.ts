@@ -14,7 +14,15 @@ describe('application routes', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter(routes),
-        { provide: AuthService, useValue: { isAuthenticated: () => true, hasRole: () => true, currentUser: () => ({ name: 'Ada' }), logout: () => undefined } },
+        {
+          provide: AuthService,
+          useValue: {
+            isAuthenticated: () => true,
+            hasRole: () => true,
+            currentUser: () => ({ name: 'Ada' }),
+            logout: () => undefined,
+          },
+        },
         { provide: TicketsService, useValue: { list: () => of([]) } },
         { provide: ProjectsService, useValue: { list: () => of([]) } },
         { provide: CategoriesService, useValue: { list: () => of([]) } },
@@ -29,7 +37,43 @@ describe('application routes', () => {
 
   it('redirects the authenticated application root to the dashboard', async () => {
     TestBed.configureTestingModule({
-      providers: [provideRouter(routes), { provide: AuthService, useValue: { isAuthenticated: () => true, hasRole: () => false, currentUser: () => ({ name: 'Ada' }), logout: () => undefined } }, { provide: TicketsService, useValue: { list: () => of([]) } }, { provide: ProjectsService, useValue: { list: () => of([]) } }, { provide: CategoriesService, useValue: { list: () => of([]) } }, { provide: UsersService, useValue: { list: () => of([]) } }, { provide: (await import('./features/dashboard/dashboard.service')).DashboardService, useValue: { summary: () => of({ pending: 0, byStatus: [], byProject: [], byCategory: [], totalTickets: 0, clientReplies: 0, staffReplies: 0, ticketsWithoutReply: 0, replyTimeSeries: [], ticketsTrend: [], byPriority: [], activeTicketsTotal: 0, recentTickets: [] }) } }],
+      providers: [
+        provideRouter(routes),
+        {
+          provide: AuthService,
+          useValue: {
+            isAuthenticated: () => true,
+            hasRole: () => false,
+            currentUser: () => ({ name: 'Ada' }),
+            logout: () => undefined,
+          },
+        },
+        { provide: TicketsService, useValue: { list: () => of([]) } },
+        { provide: ProjectsService, useValue: { list: () => of([]) } },
+        { provide: CategoriesService, useValue: { list: () => of([]) } },
+        { provide: UsersService, useValue: { list: () => of([]) } },
+        {
+          provide: (await import('./features/dashboard/dashboard.service')).DashboardService,
+          useValue: {
+            summary: () =>
+              of({
+                pending: 0,
+                byStatus: [],
+                byProject: [],
+                byCategory: [],
+                totalTickets: 0,
+                clientReplies: 0,
+                staffReplies: 0,
+                ticketsWithoutReply: 0,
+                replyTimeSeries: [],
+                ticketsTrend: [],
+                byPriority: [],
+                activeTicketsTotal: 0,
+                recentTickets: [],
+              }),
+          },
+        },
+      ],
     });
     const harness = await RouterTestingHarness.create('/');
     expect(harness.routeNativeElement?.textContent).toContain('Support overview');

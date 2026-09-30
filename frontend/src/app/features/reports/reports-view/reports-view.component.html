@@ -1,1 +1,89 @@
-<section class="page"><h1>{{ 'reports.title' | translate }}</h1><form [formGroup]="form" (ngSubmit)="generate()"><label>{{ 'common.keyword' | translate }}<input formControlName="q"></label><label>{{ 'common.project' | translate }}<select formControlName="projectId"><option value="">{{ 'common.all' | translate }}</option>@for(p of projects();track p.id){<option [value]="p.id">{{p.name}}</option>}</select></label><label>{{ 'common.category' | translate }}<select formControlName="categoryId"><option value="">{{ 'common.all' | translate }}</option>@for(c of categories();track c.id){<option [value]="c.id">{{c.name}}</option>}</select></label><label>{{ 'common.priority' | translate }}<select formControlName="priority"><option value="">{{ 'common.all' | translate }}</option>@for(x of priorities;track x){<option [value]="x">{{ ('value.' + x) | translate }}</option>}</select></label><label>{{ 'common.status' | translate }}<select formControlName="status"><option value="">{{ 'common.all' | translate }}</option>@for(x of statuses;track x){<option [value]="x">{{ ('value.' + x) | translate }}</option>}</select></label><label>{{ 'common.kind' | translate }}<select formControlName="kind"><option value="">{{ 'common.all' | translate }}</option>@for(x of kinds;track x){<option [value]="x">{{ ('value.' + x) | translate }}</option>}</select></label><label>{{ 'common.from' | translate }}<input type="date" formControlName="dateFrom"></label><label>{{ 'common.to' | translate }}<input type="date" formControlName="dateTo"></label><button>{{ 'reports.generate' | translate }}</button></form>@if(error()){<p class="error">{{error()}}</p>}@if(report();as r){<p>{{r.tickets.length}} {{ 'reports.matching' | translate }}</p><div class="columns"><section><h2>{{ 'dashboard.byStatus' | translate }}</h2>@for(x of r.byStatus;track x.key){<p>{{ ('value.' + x.key) | translate }} <b>{{x.count}}</b></p>}</section><section><h2>{{ 'dashboard.byProject' | translate }}</h2>@for(x of r.byProject;track x.id){<p>{{x.name}} <b>{{x.count}}</b></p>}</section><section><h2>{{ 'dashboard.byCategory' | translate }}</h2>@for(x of r.byCategory;track x.id){<p>{{x.name}} <b>{{x.count}}</b></p>}</section></div><h2>{{ 'reports.title' | translate }}</h2><ul>@for(t of r.tickets;track t.id){<li>{{t.title}} · {{ ('value.' + t.status) | translate }}</li>}@empty{<li>{{ 'reports.none' | translate }}</li>}</ul>}</section>
+<section class="page">
+  <h1>{{ 'reports.title' | translate }}</h1>
+  <form [formGroup]="form" (ngSubmit)="generate()">
+    <label>{{ 'common.keyword' | translate }}<input formControlName="q" /></label
+    ><label
+      >{{ 'common.project' | translate
+      }}<select formControlName="projectId">
+        <option value="">{{ 'common.all' | translate }}</option>
+        @for (p of projects(); track p.id) {
+          <option [value]="p.id">{{ p.name }}</option>
+        }
+      </select></label
+    ><label
+      >{{ 'common.category' | translate
+      }}<select formControlName="categoryId">
+        <option value="">{{ 'common.all' | translate }}</option>
+        @for (c of categories(); track c.id) {
+          <option [value]="c.id">{{ c.name }}</option>
+        }
+      </select></label
+    ><label
+      >{{ 'common.priority' | translate
+      }}<select formControlName="priority">
+        <option value="">{{ 'common.all' | translate }}</option>
+        @for (x of priorities; track x) {
+          <option [value]="x">{{ 'value.' + x | translate }}</option>
+        }
+      </select></label
+    ><label
+      >{{ 'common.status' | translate
+      }}<select formControlName="status">
+        <option value="">{{ 'common.all' | translate }}</option>
+        @for (x of statuses; track x) {
+          <option [value]="x">{{ 'value.' + x | translate }}</option>
+        }
+      </select></label
+    ><label
+      >{{ 'common.kind' | translate
+      }}<select formControlName="kind">
+        <option value="">{{ 'common.all' | translate }}</option>
+        @for (x of kinds; track x) {
+          <option [value]="x">{{ 'value.' + x | translate }}</option>
+        }
+      </select></label
+    ><label>{{ 'common.from' | translate }}<input type="date" formControlName="dateFrom" /></label
+    ><label>{{ 'common.to' | translate }}<input type="date" formControlName="dateTo" /></label
+    ><button>{{ 'reports.generate' | translate }}</button>
+  </form>
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+  @if (report(); as r) {
+    <p>{{ r.tickets.length }} {{ 'reports.matching' | translate }}</p>
+    <div class="columns">
+      <section>
+        <h2>{{ 'dashboard.byStatus' | translate }}</h2>
+        @for (x of r.byStatus; track x.key) {
+          <p>
+            {{ 'value.' + x.key | translate }} <b>{{ x.count }}</b>
+          </p>
+        }
+      </section>
+      <section>
+        <h2>{{ 'dashboard.byProject' | translate }}</h2>
+        @for (x of r.byProject; track x.id) {
+          <p>
+            {{ x.name }} <b>{{ x.count }}</b>
+          </p>
+        }
+      </section>
+      <section>
+        <h2>{{ 'dashboard.byCategory' | translate }}</h2>
+        @for (x of r.byCategory; track x.id) {
+          <p>
+            {{ x.name }} <b>{{ x.count }}</b>
+          </p>
+        }
+      </section>
+    </div>
+    <h2>{{ 'reports.title' | translate }}</h2>
+    <ul>
+      @for (t of r.tickets; track t.id) {
+        <li>{{ t.title }} · {{ 'value.' + t.status | translate }}</li>
+      } @empty {
+        <li>{{ 'reports.none' | translate }}</li>
+      }
+    </ul>
+  }
+</section>

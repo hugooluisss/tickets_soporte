@@ -3,6 +3,8 @@ import { IsOptional, IsString, IsUrl, MaxLength, MinLength } from 'class-validat
 export class UpdateProjectDto {
   @IsOptional() @IsString() @MinLength(1) @MaxLength(150) name?: string;
   @IsOptional() @IsString() description?: string;
-  @Transform(({ value }) => value === '' ? undefined : value)
-  @IsOptional() @IsUrl() webhookUrl?: string | null;
+  @Transform(({ value }) => (value === '' ? undefined : value))
+  @IsOptional()
+  @IsUrl()
+  webhookUrl?: string | null;
 }

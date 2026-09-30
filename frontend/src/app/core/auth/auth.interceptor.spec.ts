@@ -12,7 +12,8 @@ describe('authInterceptor', () => {
     const navigate = vi.fn();
     TestBed.configureTestingModule({
       providers: [
-        provideHttpClient(withInterceptors([authInterceptor])), provideHttpClientTesting(),
+        provideHttpClient(withInterceptors([authInterceptor])),
+        provideHttpClientTesting(),
         { provide: AuthService, useValue: { token: 'jwt-token', logout } },
         { provide: Router, useValue: { navigate } },
       ],

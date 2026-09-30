@@ -1,29 +1,203 @@
 <section class="dashboard">
-  <header class="page-heading"><div><p class="eyebrow">{{ 'dashboard.eyebrow' | translate }}</p><h1>{{ 'dashboard.title' | translate }}</h1></div></header>
-  @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">{{ 'dashboard.eyebrow' | translate }}</p>
+      <h1>{{ 'dashboard.title' | translate }}</h1>
+    </div>
+  </header>
+  @if (error()) {
+    <p class="error" role="alert">{{ error() }}</p>
+  }
   @if (data(); as d) {
     <div class="stats-grid">
-      <article class="stat-card"><span class="stat-icon blue"><app-icon name="total-tickets" /></span><div><p>{{ 'dashboard.totalTickets' | translate }}</p><strong>{{ d.totalTickets }}</strong></div></article>
-      <article class="stat-card"><span class="stat-icon violet"><app-icon name="client-replies" /></span><div><p>{{ 'dashboard.clientReplies' | translate }}</p><strong>{{ d.clientReplies }}</strong></div></article>
-      <article class="stat-card"><span class="stat-icon teal"><app-icon name="staff-replies" /></span><div><p>{{ 'dashboard.staffReplies' | translate }}</p><strong>{{ d.staffReplies }}</strong></div></article>
-      <article class="stat-card"><span class="stat-icon amber"><app-icon name="no-reply" /></span><div><p>{{ 'dashboard.ticketsWithoutReply' | translate }}</p><strong>{{ d.ticketsWithoutReply }}</strong></div></article>
+      <article class="stat-card">
+        <span class="stat-icon blue"><app-icon name="total-tickets" /></span>
+        <div>
+          <p>{{ 'dashboard.totalTickets' | translate }}</p>
+          <strong>{{ d.totalTickets }}</strong>
+        </div>
+      </article>
+      <article class="stat-card">
+        <span class="stat-icon violet"><app-icon name="client-replies" /></span>
+        <div>
+          <p>{{ 'dashboard.clientReplies' | translate }}</p>
+          <strong>{{ d.clientReplies }}</strong>
+        </div>
+      </article>
+      <article class="stat-card">
+        <span class="stat-icon teal"><app-icon name="staff-replies" /></span>
+        <div>
+          <p>{{ 'dashboard.staffReplies' | translate }}</p>
+          <strong>{{ d.staffReplies }}</strong>
+        </div>
+      </article>
+      <article class="stat-card">
+        <span class="stat-icon amber"><app-icon name="no-reply" /></span>
+        <div>
+          <p>{{ 'dashboard.ticketsWithoutReply' | translate }}</p>
+          <strong>{{ d.ticketsWithoutReply }}</strong>
+        </div>
+      </article>
     </div>
     <div class="chart-grid">
       <article class="panel reply-panel">
-        <div class="panel-heading"><div><h2>{{ 'dashboard.replyActivity' | translate }}</h2><p>{{ 'dashboard.last14Days' | translate }}</p></div><div class="headline"><strong>{{ d.replyTimeSeries.length ? d.replyTimeSeries[d.replyTimeSeries.length - 1].count : 0 }}</strong><span>{{ 'dashboard.repliesToday' | translate }}</span></div></div>
-        <div class="reply-chart"><svg viewBox="0 0 560 180" role="img" [attr.aria-label]="'dashboard.replyActivity' | translate" preserveAspectRatio="none"><defs><linearGradient id="replyFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#4f46e5" stop-opacity=".28"/><stop offset="1" stop-color="#4f46e5" stop-opacity="0"/></linearGradient></defs><path [attr.d]="'M ' + replyArea() + ' Z'" fill="url(#replyFill)"/><polyline [attr.points]="replyLine()" fill="none" stroke="#4f46e5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>@for (point of replyPoints(); track $index) { <circle [attr.cx]="point.x" [attr.cy]="point.y" r="3" fill="#4f46e5"/> }</svg></div>
-        <div class="axis-labels"><span>{{ d.replyTimeSeries.length ? dateLabel(d.replyTimeSeries[0].date) : '—' }}</span><span>{{ d.replyTimeSeries.length ? dateLabel(d.replyTimeSeries[d.replyTimeSeries.length - 1].date) : '—' }}</span></div>
+        <div class="panel-heading">
+          <div>
+            <h2>{{ 'dashboard.replyActivity' | translate }}</h2>
+            <p>{{ 'dashboard.last14Days' | translate }}</p>
+          </div>
+          <div class="headline">
+            <strong>{{
+              d.replyTimeSeries.length ? d.replyTimeSeries[d.replyTimeSeries.length - 1].count : 0
+            }}</strong
+            ><span>{{ 'dashboard.repliesToday' | translate }}</span>
+          </div>
+        </div>
+        <div class="reply-chart">
+          <svg
+            viewBox="0 0 560 180"
+            role="img"
+            [attr.aria-label]="'dashboard.replyActivity' | translate"
+            preserveAspectRatio="none"
+          >
+            <defs>
+              <linearGradient id="replyFill" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0" stop-color="#4f46e5" stop-opacity=".28" />
+                <stop offset="1" stop-color="#4f46e5" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <path [attr.d]="'M ' + replyArea() + ' Z'" fill="url(#replyFill)" />
+            <polyline
+              [attr.points]="replyLine()"
+              fill="none"
+              stroke="#4f46e5"
+              stroke-width="3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              vector-effect="non-scaling-stroke"
+            />
+            @for (point of replyPoints(); track $index) {
+              <circle [attr.cx]="point.x" [attr.cy]="point.y" r="3" fill="#4f46e5" />
+            }
+          </svg>
+        </div>
+        <div class="axis-labels">
+          <span>{{ d.replyTimeSeries.length ? dateLabel(d.replyTimeSeries[0].date) : '—' }}</span
+          ><span>{{
+            d.replyTimeSeries.length
+              ? dateLabel(d.replyTimeSeries[d.replyTimeSeries.length - 1].date)
+              : '—'
+          }}</span>
+        </div>
       </article>
-      <article class="panel priority-panel"><div class="panel-heading"><div><h2>{{ 'dashboard.priorityBreakdown' | translate }}</h2><p>{{ 'dashboard.activeTickets' | translate }}</p></div></div>
-        <div class="priority-content"><div class="donut-wrap"><svg viewBox="0 0 100 100" role="img" [attr.aria-label]="'dashboard.priorityBreakdown' | translate"><circle cx="50" cy="50" r="40" fill="none" stroke="#e9edf5" stroke-width="10"/>@for (arc of donut(); track arc.key) { <circle cx="50" cy="50" r="40" fill="none" [attr.stroke]="arc.color" stroke-width="10" [attr.stroke-dasharray]="arc.dasharray" [attr.stroke-dashoffset]="arc.dashoffset" transform="rotate(-90 50 50)"/> }</svg><div class="donut-total"><strong>{{ d.activeTicketsTotal }}</strong><span>{{ 'dashboard.active' | translate }}</span></div></div>
-          <div class="legend">@for (item of d.byPriority; track item.key; let index = $index) { <div><i [style.backgroundColor]="donut()[index].color"></i><span>{{ ('value.' + item.key) | translate }}</span><b>{{ item.count }}</b></div> }@empty { <p>{{ 'dashboard.noPriorityData' | translate }}</p> }</div></div>
+      <article class="panel priority-panel">
+        <div class="panel-heading">
+          <div>
+            <h2>{{ 'dashboard.priorityBreakdown' | translate }}</h2>
+            <p>{{ 'dashboard.activeTickets' | translate }}</p>
+          </div>
+        </div>
+        <div class="priority-content">
+          <div class="donut-wrap">
+            <svg
+              viewBox="0 0 100 100"
+              role="img"
+              [attr.aria-label]="'dashboard.priorityBreakdown' | translate"
+            >
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#e9edf5" stroke-width="10" />
+              @for (arc of donut(); track arc.key) {
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="40"
+                  fill="none"
+                  [attr.stroke]="arc.color"
+                  stroke-width="10"
+                  [attr.stroke-dasharray]="arc.dasharray"
+                  [attr.stroke-dashoffset]="arc.dashoffset"
+                  transform="rotate(-90 50 50)"
+                />
+              }
+            </svg>
+            <div class="donut-total">
+              <strong>{{ d.activeTicketsTotal }}</strong
+              ><span>{{ 'dashboard.active' | translate }}</span>
+            </div>
+          </div>
+          <div class="legend">
+            @for (item of d.byPriority; track item.key; let index = $index) {
+              <div>
+                <i [style.backgroundColor]="donut()[index].color"></i
+                ><span>{{ 'value.' + item.key | translate }}</span
+                ><b>{{ item.count }}</b>
+              </div>
+            } @empty {
+              <p>{{ 'dashboard.noPriorityData' | translate }}</p>
+            }
+          </div>
+        </div>
       </article>
-      <article class="panel trend-panel"><div class="panel-heading"><div><h2>{{ 'dashboard.ticketTrend' | translate }}</h2><p>{{ 'dashboard.last7Days' | translate }}</p></div><a routerLink="/reports">{{ 'dashboard.viewReport' | translate }} <span aria-hidden="true">→</span></a></div>
-        <div class="bar-chart">@for (bar of trend(); track bar.date) { <div class="bar-day"><div class="bars"><span class="bar created" [style.height.%]="bar.createdHeight" [attr.title]="bar.created + ' ' + ('dashboard.created' | translate)"></span><span class="bar solved" [style.height.%]="bar.solvedHeight" [attr.title]="bar.solved + ' ' + ('dashboard.solved' | translate)"></span></div><small>{{ dateLabel(bar.date) }}</small></div> }@empty { <p>{{ 'dashboard.noTrendData' | translate }}</p> }</div>
-        <div class="bar-legend"><span><i class="created-key"></i>{{ 'dashboard.created' | translate }}</span><span><i class="solved-key"></i>{{ 'dashboard.solved' | translate }}</span></div>
+      <article class="panel trend-panel">
+        <div class="panel-heading">
+          <div>
+            <h2>{{ 'dashboard.ticketTrend' | translate }}</h2>
+            <p>{{ 'dashboard.last7Days' | translate }}</p>
+          </div>
+          <a routerLink="/reports"
+            >{{ 'dashboard.viewReport' | translate }} <span aria-hidden="true">→</span></a
+          >
+        </div>
+        <div class="bar-chart">
+          @for (bar of trend(); track bar.date) {
+            <div class="bar-day">
+              <div class="bars">
+                <span
+                  class="bar created"
+                  [style.height.%]="bar.createdHeight"
+                  [attr.title]="bar.created + ' ' + ('dashboard.created' | translate)"
+                ></span
+                ><span
+                  class="bar solved"
+                  [style.height.%]="bar.solvedHeight"
+                  [attr.title]="bar.solved + ' ' + ('dashboard.solved' | translate)"
+                ></span>
+              </div>
+              <small>{{ dateLabel(bar.date) }}</small>
+            </div>
+          } @empty {
+            <p>{{ 'dashboard.noTrendData' | translate }}</p>
+          }
+        </div>
+        <div class="bar-legend">
+          <span><i class="created-key"></i>{{ 'dashboard.created' | translate }}</span
+          ><span><i class="solved-key"></i>{{ 'dashboard.solved' | translate }}</span>
+        </div>
       </article>
-      <article class="panel recent-panel"><div class="panel-heading"><div><h2>{{ 'dashboard.recentTickets' | translate }}</h2><p>{{ 'dashboard.latestWork' | translate }}</p></div><a routerLink="/tickets">{{ 'dashboard.viewAll' | translate }} <span aria-hidden="true">→</span></a></div>
-        <div class="recent-list">@for (ticket of d.recentTickets; track ticket.id) { <div class="recent-ticket" [class]="'recent-ticket status-' + ticket.status"><div><strong>{{ ticket.title }}</strong><small>{{ dateLabel(ticket.createdAt.slice(0, 10)) }}</small></div><span class="status-pill" [class]="'status-pill status-pill-' + ticket.status">{{ ('value.' + ticket.status) | translate }}</span></div> }@empty { <p class="empty-state">{{ 'dashboard.noRecentTickets' | translate }}</p> }</div>
+      <article class="panel recent-panel">
+        <div class="panel-heading">
+          <div>
+            <h2>{{ 'dashboard.recentTickets' | translate }}</h2>
+            <p>{{ 'dashboard.latestWork' | translate }}</p>
+          </div>
+          <a routerLink="/tickets"
+            >{{ 'dashboard.viewAll' | translate }} <span aria-hidden="true">→</span></a
+          >
+        </div>
+        <div class="recent-list">
+          @for (ticket of d.recentTickets; track ticket.id) {
+            <div class="recent-ticket" [class]="'recent-ticket status-' + ticket.status">
+              <div>
+                <strong>{{ ticket.title }}</strong
+                ><small>{{ dateLabel(ticket.createdAt.slice(0, 10)) }}</small>
+              </div>
+              <span class="status-pill" [class]="'status-pill status-pill-' + ticket.status">{{
+                'value.' + ticket.status | translate
+              }}</span>
+            </div>
+          } @empty {
+            <p class="empty-state">{{ 'dashboard.noRecentTickets' | translate }}</p>
+          }
+        </div>
       </article>
     </div>
   }

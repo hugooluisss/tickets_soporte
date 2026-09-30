@@ -1,4 +1,12 @@
-import { IsBoolean, IsEmail, IsEnum, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import {
+  IsBoolean,
+  IsEmail,
+  IsEnum,
+  IsOptional,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 import { TicketKind } from '../../tickets/ticket-kind.enum';
 
 export class CreatePublicTicketDto {

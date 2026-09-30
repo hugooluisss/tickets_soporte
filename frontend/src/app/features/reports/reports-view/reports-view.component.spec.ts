@@ -14,7 +14,18 @@ describe('ReportsView', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ReportsView],
-      providers: [provideRouter([]), { provide: ProjectsService, useValue: { list: () => of([]) } }, { provide: CategoriesService, useValue: { list: () => of([]) } }, { provide: UsersService, useValue: { list: () => of([]) } }, { provide: ReportsService, useValue: { generate: () => of({ tickets: [], byStatus: [], byProject: [], byCategory: [] }) } }],
+      providers: [
+        provideRouter([]),
+        { provide: ProjectsService, useValue: { list: () => of([]) } },
+        { provide: CategoriesService, useValue: { list: () => of([]) } },
+        { provide: UsersService, useValue: { list: () => of([]) } },
+        {
+          provide: ReportsService,
+          useValue: {
+            generate: () => of({ tickets: [], byStatus: [], byProject: [], byCategory: [] }),
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ReportsView);

@@ -16,7 +16,12 @@ describe('TicketNotesController authorization', () => {
   });
   it('allows administrators and rejects non-admin deletion', () => {
     const handler = TicketNotesController.prototype.delete;
-    const context = (role: UserRole) => ({ getHandler: () => handler, getClass: () => TicketNotesController, switchToHttp: () => ({ getRequest: () => ({ user: { role } }) }) }) as any;
+    const context = (role: UserRole) =>
+      ({
+        getHandler: () => handler,
+        getClass: () => TicketNotesController,
+        switchToHttp: () => ({ getRequest: () => ({ user: { role } }) }),
+      }) as any;
     expect(guard.canActivate(context(UserRole.ADMIN))).toBe(true);
     expect(() => guard.canActivate(context(UserRole.USER))).toThrow(ForbiddenException);
   });

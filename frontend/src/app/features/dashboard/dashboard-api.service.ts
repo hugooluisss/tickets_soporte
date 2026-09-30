@@ -7,5 +7,7 @@ import { DashboardSummary } from '../models';
 @Injectable({ providedIn: 'root' })
 export class DashboardApiService {
   private readonly http = inject(HttpClient);
-  summary(): Observable<DashboardSummary> { return this.http.get<DashboardSummary>(`${environment.apiBaseUrl}/dashboard/summary`); }
+  summary(): Observable<DashboardSummary> {
+    return this.http.get<DashboardSummary>(`${environment.apiBaseUrl}/dashboard/summary`);
+  }
 }

@@ -12,10 +12,25 @@ describe('PublicTicketTrackingComponent', () => {
     TestBed.resetTestingModule();
     localStorage.setItem('lang', 'en');
     await TestBed.configureTestingModule({
-      providers: [provideRouter([{ path: 'public/tickets/:token', component: PublicTicketTrackingComponent }]), {
-        provide: PublicTicketTrackingApiService,
-        useValue: { get: vi.fn(() => of({ title: 'Broken page', status: 'pending', createdAt: '2026-01-01', kind: 'bug', description: 'Details' })) },
-      }],
+      providers: [
+        provideRouter([
+          { path: 'public/tickets/:token', component: PublicTicketTrackingComponent },
+        ]),
+        {
+          provide: PublicTicketTrackingApiService,
+          useValue: {
+            get: vi.fn(() =>
+              of({
+                title: 'Broken page',
+                status: 'pending',
+                createdAt: '2026-01-01',
+                kind: 'bug',
+                description: 'Details',
+              }),
+            ),
+          },
+        },
+      ],
     }).compileComponents();
     const harness = await RouterTestingHarness.create('/public/tickets/opaque-token');
     await harness.fixture.whenStable();
@@ -29,10 +44,15 @@ describe('PublicTicketTrackingComponent', () => {
     TestBed.resetTestingModule();
     localStorage.setItem('lang', 'en');
     await TestBed.configureTestingModule({
-      providers: [provideRouter([{ path: 'public/tickets/:token', component: PublicTicketTrackingComponent }]), {
-        provide: PublicTicketTrackingApiService,
-        useValue: { get: vi.fn(() => throwError(() => new Error('Not found'))) },
-      }],
+      providers: [
+        provideRouter([
+          { path: 'public/tickets/:token', component: PublicTicketTrackingComponent },
+        ]),
+        {
+          provide: PublicTicketTrackingApiService,
+          useValue: { get: vi.fn(() => throwError(() => new Error('Not found'))) },
+        },
+      ],
     }).compileComponents();
     const harness = await RouterTestingHarness.create('/public/tickets/invalid');
     await harness.fixture.whenStable();

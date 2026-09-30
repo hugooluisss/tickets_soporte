@@ -10,6 +10,14 @@ export class TicketNotesRepository {
     const note = await this.repository.save(this.repository.create(data));
     return this.repository.findOneOrFail({ where: { id: note.id }, relations: { author: true } });
   }
-  listByTicket(ticketId: string): Promise<TicketNote[]> { return this.repository.find({ where: { ticketId }, relations: { author: true }, order: { createdAt: 'ASC', id: 'ASC' } }); }
-  async delete(id: string): Promise<boolean> { return (await this.repository.delete(id)).affected! > 0; }
+  listByTicket(ticketId: string): Promise<TicketNote[]> {
+    return this.repository.find({
+      where: { ticketId },
+      relations: { author: true },
+      order: { createdAt: 'ASC', id: 'ASC' },
+    });
+  }
+  async delete(id: string): Promise<boolean> {
+    return (await this.repository.delete(id)).affected! > 0;
+  }
 }
